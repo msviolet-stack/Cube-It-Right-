@@ -3,716 +3,751 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3D Cube Box Builder</title>
+  <title>Build the Box with Cubes</title>
   <style>
-    :root {
-      --sky1: #dff6ff;
-      --sky2: #fff7d6;
-      --card: rgba(255,255,255,0.94);
-      --text: #35425b;
-      --accent: #ff7aa2;
-      --accent2: #7a8cff;
-      --accent3: #64d7a6;
-      --line: #dbe4f0;
-      --shadow: 0 14px 34px rgba(78, 96, 140, 0.18);
-      --cube1-front: #7fd0ff;
-      --cube1-side: #45aee8;
-      --cube1-top: #d9f4ff;
-      --cube2-front: #8ee8a8;
-      --cube2-side: #53c97b;
-      --cube2-top: #ddfae7;
-      --cube3-front: #ffc87f;
-      --cube3-side: #ee9740;
-      --cube3-top: #fff0d7;
-      --box-front: #fff0b8;
-      --box-side: #f5d97d;
-      --box-top: #fff8d9;
-      --good: #25a85c;
-      --bad: #e95b5b;
-      --toy-outline: #ffffff;
-    }
-
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      min-height: 100vh;
-      font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, #ffffff 0%, transparent 28%),
-        radial-gradient(circle at bottom right, #fff0f7 0%, transparent 22%),
-        linear-gradient(135deg, var(--sky1), var(--sky2));
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      color: #1f2937;
     }
 
-    .page {
-      max-width: 1380px;
-      margin: 0 auto;
-      padding: 20px;
+    .header {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 18px 24px;
     }
 
-    .hero {
-      background: var(--card);
-      border-radius: 28px;
-      padding: 20px 24px;
-      box-shadow: var(--shadow);
-      margin-bottom: 18px;
-      border: 3px solid rgba(255,255,255,0.7);
-    }
-
-    .hero h1 {
-      margin: 0 0 8px;
-      font-size: 34px;
-      line-height: 1.1;
-      color: #ff5c93;
-    }
-
-    .hero p {
+    .header h1 {
       margin: 0;
-      font-size: 17px;
-      line-height: 1.5;
+      font-size: 28px;
+      color: #ec4899;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      color: #6b7280;
+      font-size: 14px;
     }
 
     .layout {
-      display: grid;
-      grid-template-columns: 300px 1fr 320px;
-      gap: 18px;
-      align-items: start;
+      display: flex;
+      min-height: calc(100vh - 86px);
     }
 
     .panel {
-      background: var(--card);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
-      padding: 18px;
-      border: 3px solid rgba(255,255,255,0.66);
+      background: white;
+      padding: 16px;
+      overflow-y: auto;
     }
 
-    .panel h2 {
-      margin: 0 0 12px;
-      font-size: 22px;
-      color: #5260a8;
-    }
-
-    .small {
-      font-size: 14px;
-      line-height: 1.5;
-      color: #63708c;
-    }
-
-    .cube-shelf {
+    .left-panel {
+      width: 240px;
+      border-right: 1px solid #e5e7eb;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-top: 10px;
-    }
-
-    .cube-choice {
-      border: 4px solid transparent;
-      background: linear-gradient(180deg, #ffffff, #f8fbff);
-      border-radius: 26px;
-      padding: 14px;
-      cursor: pointer;
-      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: 0 10px 20px rgba(118, 143, 176, 0.12), inset 0 3px 0 rgba(255,255,255,0.95);
-    }
-
-    .cube-choice:hover { transform: translateY(-3px) scale(1.01); }
-
-    .cube-choice.active {
-      border-color: var(--accent);
-      box-shadow: 0 12px 24px rgba(255,122,162,0.22), inset 0 3px 0 rgba(255,255,255,0.95);
-    }
-
-    .cube-row {
-      display: flex;
-      align-items: center;
       gap: 14px;
     }
 
-    .cube-info strong {
+    .right-panel {
+      width: 260px;
+      border-left: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 0 6px 0;
+    }
+
+    .section-subtext {
+      font-size: 12px;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .cube-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cube-option {
+      border: 2px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      background: #fafafa;
+    }
+
+    .cube-option:hover {
+      transform: translateY(-1px);
+      border-color: #c4b5fd;
+    }
+
+    .cube-option.selected {
+      border-color: #8b5cf6;
+      background: #f5f3ff;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+    }
+
+    .cube-preview {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .help-box {
+      margin-top: auto;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .tab-label {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-right: 4px;
+    }
+
+    .tab-btn {
+      border: none;
+      background: #f3f4f6;
+      color: #4b5563;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: #8b5cf6;
+      color: white;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+    }
+
+    .selected-pill {
+      margin-left: auto;
+      font-size: 12px;
+      background: #f3f4f6;
+      color: #4b5563;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .canvas-wrap {
+      flex: 1;
+      display: flex;
+      align-items: flex-start; /* shifted up */
+      justify-content: center;
+      padding-top: 8px; /* box sits higher */
+      min-height: 500px;
+    }
+
+    .canvas-card {
+      width: 100%;
+      max-width: 760px;
+      height: 520px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #scene {
+      width: 100%;
+      height: 100%;
       display: block;
-      font-size: 18px;
+      cursor: grab;
+    }
+
+    #scene:active {
+      cursor: grabbing;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    button.action {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .primary {
+      background: #8b5cf6;
+      color: white;
+      box-shadow: 0 8px 18px rgba(139, 92, 246, 0.25);
+    }
+
+    .primary:hover {
+      background: #7c3aed;
+    }
+
+    .secondary {
+      background: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+
+    .secondary:hover {
+      background: #f9fafb;
+    }
+
+    .stat-card {
+      background: #f9fafb;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #9ca3af;
       margin-bottom: 4px;
     }
 
-    .cube-info span {
-      font-size: 14px;
-      color: #6d7894;
+    .stat-value {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1f2937;
+      line-height: 1.3;
     }
 
-    .toy-tag {
-      display: inline-block;
-      margin-top: 7px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      background: #fff7df;
-      color: #b67000;
-      border: 2px solid #ffe1a3;
-    }
-
-    .stage {
-      min-height: 760px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .topbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .pill {
-      background: #f8fbff;
-      border: 2px solid #e3ecf8;
-      border-radius: 999px;
-      padding: 10px 14px;
+    .success-box {
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 14px;
+      padding: 12px;
+      color: #15803d;
       font-size: 14px;
       font-weight: 700;
     }
 
-    .world {
-      position: relative;
-      background: linear-gradient(180deg, #f6fbff, #fffaf0);
-      border-radius: 28px;
-      min-height: 620px;
-      overflow: hidden;
-      border: 3px dashed #dde8f7;
+    .summary {
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid #f1f5f9;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .summary-row {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      perspective: 1200px;
+      justify-content: space-between;
+      margin-bottom: 8px;
     }
 
-    .ground {
+    .summary-row strong {
+      color: #1f2937;
+    }
+
+    .hint-overlay {
       position: absolute;
-      bottom: 44px;
-      width: 82%;
-      height: 100px;
-      background: radial-gradient(ellipse at center, #d7f2d5 0%, #b7e2b2 55%, #a6d9a0 100%);
-      border-radius: 50%;
-      filter: blur(1px);
+      left: 16px;
+      bottom: 16px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #4b5563;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+      pointer-events: none;
     }
 
-    .scene {
-      position: relative;
-      width: 760px;
-      height: 520px;
-      transform-style: preserve-3d;
-      transform: rotateX(58deg) rotateZ(-44deg) scale(1);
-    }
+    @media (max-width: 1024px) {
+      .layout {
+        flex-direction: column;
+      }
 
-    .box-wrap {
-      position: absolute;
-      left: 180px;
-      top: 120px;
-      transform-style: preserve-3d;
-    }
+      .left-panel,
+      .right-panel {
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #e5e7eb;
+      }
 
-    .iso-box-base,
-    .placed-cube,
-    .side-cube {
-      position: absolute;
-      transform-style: preserve-3d;
-    }
+      .selected-pill {
+        margin-left: 0;
+      }
 
-    .side-cube {
-      overflow: visible;
-      perspective: 900px;
-    }
+      .cube-options {
+        flex-direction: row;
+      }
 
-    .face {
-      position: absolute;
-      box-sizing: border-box;
-      border: 1.5px solid rgba(79,93,124,0.16);
-    }
-
-    .box-label {
-      position: absolute;
-      right: 18px;
-      top: 18px;
-      background: #fff;
-      border-radius: 18px;
-      padding: 10px 14px;
-      font-weight: 800;
-      box-shadow: 0 8px 20px rgba(91, 111, 146, 0.12);
-    }
-
-    .action-row, .box-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-      border-radius: 18px;
-      padding: 12px 15px;
-      font-size: 15px;
-      font-weight: 800;
-      transition: transform 0.12s ease, opacity 0.12s ease;
-      box-shadow: 0 5px 0 rgba(0,0,0,0.04);
-    }
-
-    button:hover { transform: translateY(-1px); }
-
-    .btn-box {
-      background: #eef4ff;
-      color: #43506f;
-    }
-
-    .btn-box.active {
-      background: var(--accent2);
-      color: white;
-    }
-
-    .btn-alt {
-      background: #eefaf3;
-      color: #2a7a49;
-    }
-
-    .stats-grid {
-      display: grid;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .stat-card {
-      background: linear-gradient(180deg, #ffffff, #f8fbff);
-      border: 2px solid #ebf1f8;
-      border-radius: 22px;
-      padding: 14px;
-    }
-
-    .stat-card strong {
-      display: block;
-      font-size: 15px;
-      margin-bottom: 6px;
-      color: #5f6e90;
-    }
-
-    .stat-card .big {
-      font-size: 24px;
-      font-weight: 900;
-      color: #384463;
-      line-height: 1.2;
-    }
-
-    .message {
-      min-height: 46px;
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 18px;
-      font-weight: 800;
-      line-height: 1.4;
-      background: #f8fbff;
-    }
-
-    .message.good { color: var(--good); background: #eefbf3; }
-    .message.bad { color: var(--bad); background: #fff1f1; }
-    .message.info { color: #5a6889; }
-
-    .hint {
-      margin-top: 14px;
-      background: #fffaf0;
-      border: 2px dashed #ffd18d;
-      border-radius: 20px;
-      padding: 14px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .stack-note {
-      font-size: 14px;
-      color: #6c7690;
-      margin-top: 10px;
-    }
-
-    @media (max-width: 1180px) {
-      .layout { grid-template-columns: 1fr; }
-      .stage { min-height: auto; }
-      .world { min-height: 520px; }
-      .scene { transform: rotateX(58deg) rotateZ(-44deg) scale(0.82); }
+      .canvas-card {
+        height: 420px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <div class="hero">
-      <h1>Build the Box with Cubes!</h1>
-      <p>Pick a cube from the shelf, then click the big 3D box to drop cubes inside. Try different cube sizes and see which ones fill the box better.</p>
-    </div>
-
-    <div class="layout">
-      <section class="panel">
-        <h2>Cube Shelf</h2>
-        <p class="small">Choose a cube. The bigger the cube, the more space it takes up.</p>
-        <div class="cube-shelf" id="cubeShelf"></div>
-        <div class="hint">
-          <strong>How to play:</strong><br>
-          1. Pick a cube from the left.<br>
-          2. Pick a box.<br>
-          3. Click inside the big 3D box to add a cube of that size.<br>
-          4. Keep filling and compare the results.
-        </div>
-      </section>
-
-      <section class="panel stage">
-        <div class="topbar">
-          <div class="pill" id="currentBoxPill">Box 1</div>
-          <div class="pill" id="currentCubePill">Selected cube: 1 cm</div>
-        </div>
-
-        <div class="box-row" id="boxButtons"></div>
-
-        <div class="world" id="world">
-          <div class="ground"></div>
-          <div class="box-label" id="dimensionLabel">6 × 6 × 12</div>
-          <div class="scene" id="scene"></div>
-        </div>
-
-        <div class="stack-note">Each click adds one cube of the selected size into the next available space.</div>
-      </section>
-
-      <section class="panel">
-        <h2>Your Results</h2>
-        <div class="action-row">
-          <button class="btn-alt" id="undoBtn">Undo</button>
-          <button class="btn-box" id="resetBtn">Reset Box</button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <strong>Box dimensions</strong>
-            <div class="big" id="dimensionsText">6 cm by 6 cm by 12 cm</div>
-          </div>
-          <div class="stat-card">
-            <strong>Selected cube volume</strong>
-            <div class="big" id="cubeVolumeText">1 cm³</div>
-          </div>
-          <div class="stat-card">
-            <strong>Number of cubes by length</strong>
-            <div class="big" id="countLengthText">6</div>
-          </div>
-          <div class="stat-card">
-            <strong>Number of cubes by breadth</strong>
-            <div class="big" id="countBreadthText">6</div>
-          </div>
-          <div class="stat-card">
-            <strong>Number of cubes by height</strong>
-            <div class="big" id="countHeightText">12</div>
-          </div>
-        </div>
-
-        <div class="message info" id="message">Choose a cube and start filling the box.</div>
-      </section>
-    </div>
+  <div class="header">
+    <h1>Build the Box with Cubes!</h1>
+    <p>Choose a cube, choose a box, and see how many cubes fit inside.</p>
   </div>
 
-  <script>
-    const boxes = [
-      { name: 'Box 1', l: 6, w: 6, h: 12 },
-      { name: 'Box 2', l: 9, w: 15, h: 9 },
-      { name: 'Box 3', l: 6, w: 8, h: 7 }
+  <div class="layout">
+    <aside class="panel left-panel">
+      <div>
+        <p class="section-title">Cube Shelf</p>
+        <p class="section-subtext">Pick a cube size. Bigger cubes take up more space.</p>
+      </div>
+
+      <div class="cube-options" id="cubeOptions"></div>
+
+      <div class="help-box">
+        <strong>How to play:</strong><br>
+        1. Pick a cube size.<br>
+        2. Pick a box.<br>
+        3. Click <strong>Add Cube</strong>.<br>
+        4. Drag to rotate the box.<br>
+        5. Use <strong>Undo</strong> or <strong>Reset Box</strong>.
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="top-bar">
+        <span class="tab-label">Box</span>
+        <div id="boxTabs"></div>
+        <div class="selected-pill" id="selectedCubeText">Selected cube: 2 cm</div>
+      </div>
+
+      <div class="canvas-wrap">
+        <div class="canvas-card">
+          <canvas id="scene"></canvas>
+          <div class="hint-overlay">Drag to rotate the box</div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="action primary" id="addCubeBtn">+ Add Cube</button>
+        <button class="action secondary" id="undoBtn">Undo</button>
+        <button class="action secondary" id="resetBtn">Reset Box</button>
+      </div>
+    </main>
+
+    <aside class="panel right-panel">
+      <p class="section-title">Your Results</p>
+
+      <div class="stat-card">
+        <div class="stat-label">Box dimensions</div>
+        <div class="stat-value" id="boxDimensions"></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Selected cube volume</div>
+        <div class="stat-value" id="cubeVolume"></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Number of cubes by length</div>
+        <div class="stat-value" id="lengthCount"></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Number of cubes by breadth</div>
+        <div class="stat-value" id="breadthCount"></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Number of cubes by height</div>
+        <div class="stat-value" id="heightCount"></div>
+      </div>
+
+      <div id="lastAddedBox"></div>
+
+      <div class="summary">
+        <div class="summary-row">
+          <span>Total box volume</span>
+          <strong id="totalVol"></strong>
+        </div>
+        <div class="summary-row">
+          <span>Used</span>
+          <strong id="usedVol"></strong>
+        </div>
+        <div class="summary-row">
+          <span>Remaining</span>
+          <strong id="remainingVol"></strong>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+    import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+    const BOXES = [
+      { width: 6, depth: 6, height: 12, label: 'Box 1 (6 × 6 × 12)' },
+      { width: 9, depth: 15, height: 9, label: 'Box 2 (9 × 15 × 9)' },
+      { width: 6, depth: 8, height: 7, label: 'Box 3 (6 × 8 × 7)' }
     ];
 
-    const cubeOptions = [1, 2, 3];
-    const unit = 26;
-    const states = boxes.map(box => ({
-      cells: create3D(box.l, box.w, box.h),
-      placements: []
-    }));
+    const CUBE_SIZES = [1, 2, 3];
 
-    let currentBox = 0;
-    let selectedCube = 1;
+    let activeBox = 0;
+    let selectedCube = 2;
+    let cubesMap = { 0: [], 1: [], 2: [] };
+    let lastAdded = null;
 
-    const cubeShelf = document.getElementById('cubeShelf');
-    const boxButtons = document.getElementById('boxButtons');
-    const scene = document.getElementById('scene');
-    const message = document.getElementById('message');
-    const currentBoxPill = document.getElementById('currentBoxPill');
-    const currentCubePill = document.getElementById('currentCubePill');
-    const dimensionLabel = document.getElementById('dimensionLabel');
-    const dimensionsText = document.getElementById('dimensionsText');
-    const cubeVolumeText = document.getElementById('cubeVolumeText');
-    const countLengthText = document.getElementById('countLengthText');
-    const countBreadthText = document.getElementById('countBreadthText');
-    const countHeightText = document.getElementById('countHeightText');
+    const cubeOptionsEl = document.getElementById('cubeOptions');
+    const boxTabsEl = document.getElementById('boxTabs');
+    const selectedCubeText = document.getElementById('selectedCubeText');
+    const boxDimensions = document.getElementById('boxDimensions');
+    const cubeVolume = document.getElementById('cubeVolume');
+    const lengthCount = document.getElementById('lengthCount');
+    const breadthCount = document.getElementById('breadthCount');
+    const heightCount = document.getElementById('heightCount');
+    const totalVolEl = document.getElementById('totalVol');
+    const usedVolEl = document.getElementById('usedVol');
+    const remainingVolEl = document.getElementById('remainingVol');
+    const lastAddedBox = document.getElementById('lastAddedBox');
 
-    document.getElementById('undoBtn').addEventListener('click', undoLast);
-    document.getElementById('resetBtn').addEventListener('click', resetBox);
-    document.getElementById('world').addEventListener('click', addOneCube);
+    const addCubeBtn = document.getElementById('addCubeBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const resetBtn = document.getElementById('resetBtn');
 
-    function create3D(l, w, h) {
-      return Array.from({ length: h }, () =>
-        Array.from({ length: w }, () =>
-          Array.from({ length: l }, () => 0)
-        )
+    function getCurrentBox() {
+      return BOXES[activeBox];
+    }
+
+    function getCurrentCubes() {
+      return cubesMap[activeBox] || [];
+    }
+
+    function getTotalVolume() {
+      const box = getCurrentBox();
+      return box.width * box.depth * box.height;
+    }
+
+    function getUsedVolume() {
+      return getCurrentCubes().reduce((sum, c) => sum + c.size ** 3, 0);
+    }
+
+    function cubesAlongAxis(dim) {
+      return Math.floor(dim / selectedCube);
+    }
+
+    function isOccupied(placedCubes, x, y, z, size) {
+      return placedCubes.some(c =>
+        x < c.x + c.size && x + size > c.x &&
+        y < c.y + c.size && y + size > c.y &&
+        z < c.z + c.size && z + size > c.z
       );
     }
 
-    function getBox() { return boxes[currentBox]; }
-    function getState() { return states[currentBox]; }
-
-    function renderShelf() {
-      cubeShelf.innerHTML = '';
-      cubeOptions.forEach(size => {
-        const displaySize = 30 + size * 14;
-        const svgW = displaySize * 2.2;
-        const svgH = displaySize * 2.2;
-        const card = document.createElement('div');
-        card.className = 'cube-choice' + (size === selectedCube ? ' active' : '');
-        card.innerHTML = `
-          <div class="cube-row">
-            <div style="width:${svgW}px;height:${svgH}px;flex:0 0 ${svgW}px;display:flex;align-items:center;justify-content:center;">
-              <svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" aria-hidden="true">
-                <defs>
-                  <filter id="softShadow">
-                    <feGaussianBlur stdDeviation="3"></feGaussianBlur>
-                  </filter>
-                </defs>
-                ${cubeHTML(size, size === 1 ? 'cube1' : size === 2 ? 'cube2' : 'cube3', 12, 12, true)}
-              </svg>
-            </div>
-            <div class="cube-info">
-              <strong>${size} cm cube</strong>
-              <span>Volume: ${size * size * size} cm³</span>
-              <div class="toy-tag">Toy Block</div>
-            </div>
-          </div>
-        `;
-        card.addEventListener('click', () => {
-          selectedCube = size;
-          updateAll();
-          setMessage(`You chose the ${size} cm cube.`, 'info');
-        });
-        cubeShelf.appendChild(card);
-      });
-    }
-
-    function renderBoxButtons() {
-      boxButtons.innerHTML = '';
-      boxes.forEach((box, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-box' + (i === currentBox ? ' active' : '');
-        btn.textContent = `${box.name} (${box.l} × ${box.w} × ${box.h})`;
-        btn.addEventListener('click', () => {
-          currentBox = i;
-          updateAll();
-          setMessage(`Now showing ${box.name}.`, 'info');
-        });
-        boxButtons.appendChild(btn);
-      });
-    }
-
-    function cubeHTML(size, palette, x, y, standalone = false) {
-      const base = standalone ? (22 + size * 14) : size * unit;
-      const front = palette === 'cube1' ? '#1674d1' : palette === 'cube2' ? '#37b86b' : '#ec9837';
-      const side = palette === 'cube1' ? '#0f5fb2' : palette === 'cube2' ? '#239451' : '#d97f1d';
-      const top = palette === 'cube1' ? '#20a0ea' : palette === 'cube2' ? '#59d68a' : '#ffb861';
-      const sx = base * 0.55;
-      const sy = base * 0.26;
-      const h = base;
-      const shadow = standalone
-        ? `<ellipse cx="${x + sx + base * 0.55}" cy="${y + sy + h + 18}" rx="${base * 0.7}" ry="${base * 0.18}" fill="rgba(0,0,0,0.12)" filter="url(#softShadow)" />`
-        : '';
-
-      return `
-        ${shadow}
-        <g class="${standalone ? 'shelf-cube' : 'placed-cube'}">
-          <polygon points="${x},${y + sy} ${x + sx},${y} ${x + sx + base},${y} ${x + base},${y + sy}" fill="${top}" stroke="#111" stroke-width="2" stroke-linejoin="round"></polygon>
-          <polygon points="${x + base},${y + sy} ${x + sx + base},${y} ${x + sx + base},${y + h} ${x + base},${y + h + sy}" fill="${side}" stroke="#111" stroke-width="2" stroke-linejoin="round"></polygon>
-          <polygon points="${x},${y + sy} ${x + base},${y + sy} ${x + base},${y + h + sy} ${x},${y + h + sy * 2}" fill="${front}" stroke="#111" stroke-width="2" stroke-linejoin="round"></polygon>
-        </g>
-      `;
-    }
-
-    function renderScene() {
-      const box = getBox();
-      const state = getState();
-      scene.innerHTML = '';
-
-      const floorW = box.l * unit;
-      const floorD = box.w * unit;
-      const wallH = box.h * unit;
-      const dx = floorD * 0.55;
-      const dy = floorD * 0.26;
-      const originX = 130;
-      const originY = 360;
-      const svgW = 760;
-      const svgH = 520;
-
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('width', svgW);
-      svg.setAttribute('height', svgH);
-      svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
-      svg.style.overflow = 'visible';
-
-      svg.innerHTML = `
-        <defs>
-          <filter id="sceneShadow">
-            <feGaussianBlur stdDeviation="4"></feGaussianBlur>
-          </filter>
-        </defs>
-        <ellipse cx="${originX + floorW / 2 + dx / 2}" cy="${originY + wallH + dy + 34}" rx="${Math.max(90, floorW * 0.75)}" ry="36" fill="rgba(0,0,0,0.08)" filter="url(#sceneShadow)"></ellipse>
-        <polygon points="${originX},${originY} ${originX + dx},${originY - dy} ${originX + dx + floorW},${originY - dy} ${originX + floorW},${originY}" fill="#f7efc9" stroke="#d7cfa8" stroke-width="1.2"></polygon>
-        <polygon points="${originX + floorW},${originY} ${originX + dx + floorW},${originY - dy} ${originX + dx + floorW},${originY - dy - wallH} ${originX + floorW},${originY - wallH}" fill="#f0d98a" stroke="#111" stroke-width="2.2" stroke-linejoin="round"></polygon>
-        <polygon points="${originX},${originY} ${originX + floorW},${originY} ${originX + floorW},${originY - wallH} ${originX},${originY - wallH}" fill="#f5e29c" stroke="#111" stroke-width="2.2" stroke-linejoin="round"></polygon>
-        <polyline points="${originX},${originY} ${originX + dx},${originY - dy} ${originX + dx + floorW},${originY - dy} ${originX + floorW},${originY} ${originX},${originY}" fill="none" stroke="#111" stroke-width="2.2" stroke-linejoin="round"></polyline>
-      `;
-
-      for (let i = 1; i < box.l; i++) {
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', originX + i * unit);
-        line.setAttribute('y1', originY);
-        line.setAttribute('x2', originX + dx + i * unit);
-        line.setAttribute('y2', originY - dy);
-        line.setAttribute('stroke', '#d9d1ab');
-        line.setAttribute('stroke-width', '1');
-        svg.appendChild(line);
-      }
-      for (let j = 1; j < box.w; j++) {
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', originX + (dx / box.w) * j);
-        line.setAttribute('y1', originY - (dy / box.w) * j);
-        line.setAttribute('x2', originX + floorW + (dx / box.w) * j);
-        line.setAttribute('y2', originY - (dy / box.w) * j);
-        line.setAttribute('stroke', '#d9d1ab');
-        line.setAttribute('stroke-width', '1');
-        svg.appendChild(line);
-      }
-
-      state.placements
-        .slice()
-        .sort((a, b) => (a.z - b.z) || (a.y - b.y) || (a.x - b.x))
-        .forEach(p => {
-          const isoX = originX + p.x * unit + p.y * (unit * 0.55);
-          const isoY = originY - p.z * unit - p.y * (unit * 0.26) - p.size * unit;
-          const holder = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          holder.innerHTML = cubeHTML(
-            p.size,
-            p.size === 1 ? 'cube1' : p.size === 2 ? 'cube2' : 'cube3',
-            isoX,
-            isoY,
-            false
-          );
-          while (holder.firstChild) svg.appendChild(holder.firstChild);
-        });
-
-      scene.appendChild(svg);
-    }
-
-    function fitsAt(x, y, z, size) {
-      const box = getBox();
-      const cells = getState().cells;
-      if (x + size > box.l || y + size > box.w || z + size > box.h) return false;
-
-      for (let zz = z; zz < z + size; zz++) {
-        for (let yy = y; yy < y + size; yy++) {
-          for (let xx = x; xx < x + size; xx++) {
-            if (cells[zz][yy][xx] !== 0) return false;
-          }
-        }
-      }
-      return true;
-    }
-
-    function findNextSpot(size) {
-      const box = getBox();
-      for (let z = 0; z < box.h; z++) {
-        for (let y = 0; y < box.w; y++) {
-          for (let x = 0; x < box.l; x++) {
-            if (fitsAt(x, y, z, size)) return { x, y, z };
+    function findPlacement(box, placedCubes, cubeSize) {
+      for (let z = 0; z + cubeSize <= box.height; z++) {
+        for (let y = 0; y + cubeSize <= box.depth; y++) {
+          for (let x = 0; x + cubeSize <= box.width; x++) {
+            if (!isOccupied(placedCubes, x, y, z, cubeSize)) {
+              return { x, y, z, size: cubeSize };
+            }
           }
         }
       }
       return null;
     }
 
-    function addOneCube() {
-      const state = getState();
-      const spot = findNextSpot(selectedCube);
-      if (!spot) {
-        setMessage(`No more ${selectedCube} cm cubes can fit in this box.`, 'bad');
+    function renderCubeOptions() {
+      cubeOptionsEl.innerHTML = '';
+      CUBE_SIZES.forEach(size => {
+        const div = document.createElement('div');
+        div.className = 'cube-option' + (selectedCube === size ? ' selected' : '');
+        div.innerHTML = `
+          <div class="cube-preview"></div>
+          <div style="font-weight:700;">${size} cm cube</div>
+          <div style="font-size:12px; color:#6b7280; margin-top:4px;">Volume: ${size ** 3} cm³</div>
+        `;
+        div.onclick = () => {
+          selectedCube = size;
+          renderUI();
+        };
+        cubeOptionsEl.appendChild(div);
+      });
+    }
+
+    function renderBoxTabs() {
+      boxTabsEl.innerHTML = '';
+      BOXES.forEach((box, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn' + (activeBox === i ? ' active' : '');
+        btn.textContent = box.label;
+        btn.onclick = () => {
+          activeBox = i;
+          lastAdded = null;
+          renderUI();
+          rebuildScene();
+        };
+        boxTabsEl.appendChild(btn);
+      });
+    }
+
+    function renderStats() {
+      const box = getCurrentBox();
+      const totalVol = getTotalVolume();
+      const usedVol = getUsedVolume();
+
+      selectedCubeText.textContent = `Selected cube: ${selectedCube} cm`;
+      boxDimensions.textContent = `${box.width} cm by ${box.depth} cm by ${box.height} cm`;
+      cubeVolume.textContent = `${selectedCube ** 3} cm³`;
+      lengthCount.textContent = cubesAlongAxis(box.width);
+      breadthCount.textContent = cubesAlongAxis(box.depth);
+      heightCount.textContent = cubesAlongAxis(box.height);
+      totalVolEl.textContent = `${totalVol} cm³`;
+      usedVolEl.textContent = `${usedVol} cm³`;
+      remainingVolEl.textContent = `${totalVol - usedVol} cm³`;
+
+      if (lastAdded) {
+        lastAddedBox.innerHTML = `
+          <div class="success-box">
+            Great! A ${lastAdded.size} cm cube was added.
+          </div>
+        `;
+      } else {
+        lastAddedBox.innerHTML = '';
+      }
+    }
+
+    function renderUI() {
+      renderCubeOptions();
+      renderBoxTabs();
+      renderStats();
+    }
+
+    addCubeBtn.onclick = () => {
+      const box = getCurrentBox();
+      const currentCubes = getCurrentCubes();
+      const totalVol = getTotalVolume();
+      const usedVol = getUsedVolume();
+      const nextVol = selectedCube ** 3;
+
+      if (usedVol + nextVol > totalVol) {
+        alert('Not enough space!');
         return;
       }
 
-      for (let zz = spot.z; zz < spot.z + selectedCube; zz++) {
-        for (let yy = spot.y; yy < spot.y + selectedCube; yy++) {
-          for (let xx = spot.x; xx < spot.x + selectedCube; xx++) {
-            state.cells[zz][yy][xx] = selectedCube;
-          }
-        }
-      }
-
-      state.placements.push({ ...spot, size: selectedCube });
-      updateAll(false);
-      setMessage(`Great! A ${selectedCube} cm cube was added.`, 'good');
-    }
-
-    function undoLast() {
-      const state = getState();
-      const last = state.placements.pop();
-      if (!last) {
-        setMessage('There is nothing to undo yet.', 'info');
+      const placement = findPlacement(box, currentCubes, selectedCube);
+      if (!placement) {
+        alert("Can't fit this cube right now.");
         return;
       }
 
-      for (let zz = last.z; zz < last.z + last.size; zz++) {
-        for (let yy = last.y; yy < last.y + last.size; yy++) {
-          for (let xx = last.x; xx < last.x + last.size; xx++) {
-            state.cells[zz][yy][xx] = 0;
+      cubesMap[activeBox].push(placement);
+      lastAdded = placement;
+      rebuildScene();
+      renderUI();
+    };
+
+    undoBtn.onclick = () => {
+      if (cubesMap[activeBox].length > 0) {
+        cubesMap[activeBox].pop();
+        lastAdded = null;
+        rebuildScene();
+        renderUI();
+      }
+    };
+
+    resetBtn.onclick = () => {
+      cubesMap[activeBox] = [];
+      lastAdded = null;
+      rebuildScene();
+      renderUI();
+    };
+
+    const canvas = document.getElementById('scene');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    camera.position.set(18, 16, 22);
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+    controls.minDistance = 10;
+    controls.maxDistance = 50;
+    controls.target.set(0, 4, 0);
+
+    const ambient = new THREE.AmbientLight(0xffffff, 1.1);
+    scene.add(ambient);
+
+    const dir1 = new THREE.DirectionalLight(0xffffff, 1.0);
+    dir1.position.set(20, 30, 20);
+    scene.add(dir1);
+
+    const dir2 = new THREE.DirectionalLight(0xffffff, 0.45);
+    dir2.position.set(-20, 15, -15);
+    scene.add(dir2);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const floorGeo = new THREE.PlaneGeometry(40, 40);
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.08 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -0.01;
+    scene.add(floor);
+
+    function clearGroup() {
+      while (group.children.length) {
+        const child = group.children[0];
+        group.remove(child);
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(m => m.dispose());
+          } else {
+            child.material.dispose();
           }
         }
       }
-
-      updateAll(false);
-      setMessage('Last cube removed.', 'info');
     }
 
-    function resetBox() {
-      const box = getBox();
-      states[currentBox] = {
-        cells: create3D(box.l, box.w, box.h),
-        placements: []
-      };
-      updateAll(false);
-      setMessage('This box has been reset.', 'info');
+    function makeBoxFrame(box) {
+      const geometry = new THREE.BoxGeometry(box.width, box.height, box.depth);
+      const edges = new THREE.EdgesGeometry(geometry);
+      const line = new THREE.LineSegments(
+        edges,
+        new THREE.LineBasicMaterial({ color: 0x64748b })
+      );
+      line.position.set(0, box.height / 2, 0);
+      group.add(line);
+
+      const transparentBox = new THREE.Mesh(
+        geometry,
+        new THREE.MeshPhongMaterial({
+          color: 0xcbd5e1,
+          transparent: true,
+          opacity: 0.18,
+          side: THREE.DoubleSide
+        })
+      );
+      transparentBox.position.set(0, box.height / 2, 0);
+      group.add(transparentBox);
     }
 
-    function updateStats() {
-      const box = getBox();
-      currentBoxPill.textContent = box.name;
-      currentCubePill.textContent = `Selected cube: ${selectedCube} cm`;
-      dimensionLabel.textContent = `${box.l} × ${box.w} × ${box.h}`;
-      dimensionsText.textContent = `${box.l} cm by ${box.w} cm by ${box.h} cm`;
-      cubeVolumeText.textContent = `${selectedCube ** 3} cm³`;
-      countLengthText.textContent = `${Math.floor(box.l / selectedCube)}`;
-      countBreadthText.textContent = `${Math.floor(box.w / selectedCube)}`;
-      countHeightText.textContent = `${Math.floor(box.h / selectedCube)}`;
+    function makePlacedCubes(box, placedCubes) {
+      placedCubes.forEach(c => {
+        const geo = new THREE.BoxGeometry(c.size, c.size, c.size);
+        const mat = new THREE.MeshPhongMaterial({
+          color: 0x8b5cf6,
+          transparent: false
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+
+        const x = -box.width / 2 + c.x + c.size / 2;
+        const y = c.z + c.size / 2;
+        const z = -box.depth / 2 + c.y + c.size / 2;
+
+        mesh.position.set(x, y, z);
+        group.add(mesh);
+
+        const edge = new THREE.LineSegments(
+          new THREE.EdgesGeometry(geo),
+          new THREE.LineBasicMaterial({ color: 0x5b21b6 })
+        );
+        edge.position.copy(mesh.position);
+        group.add(edge);
+      });
     }
 
-    function setMessage(text, type = 'info') {
-      message.textContent = text;
-      message.className = 'message ' + type;
+    function addBaseGrid(box) {
+      const grid = new THREE.GridHelper(
+        Math.max(box.width, box.depth) + 2,
+        Math.max(box.width, box.depth) + 2,
+        0xe5e7eb,
+        0xe5e7eb
+      );
+      grid.position.y = 0;
+      group.add(grid);
     }
 
-    function updateAll() {
-      renderShelf();
-      renderBoxButtons();
-      renderScene();
-      updateStats();
+    function rebuildScene() {
+      clearGroup();
+
+      const box = getCurrentBox();
+      const cubes = getCurrentCubes();
+
+      makeBoxFrame(box);
+      makePlacedCubes(box, cubes);
+      addBaseGrid(box);
+
+      controls.target.set(0, box.height / 2, 0);
+      camera.position.set(
+        Math.max(box.width, box.depth) * 1.8,
+        box.height * 1.2 + 4,
+        Math.max(box.width, box.depth) * 1.9
+      );
+      controls.update();
     }
 
-    updateAll();
+    function resizeRenderer() {
+      const parent = canvas.parentElement;
+      const width = parent.clientWidth;
+      const height = parent.clientHeight;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+
+    window.addEventListener('resize', resizeRenderer);
+
+    function animate() {
+      controls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    renderUI();
+    resizeRenderer();
+    rebuildScene();
+    animate();
   </script>
 </body>
 </html>
