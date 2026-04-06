@@ -1,767 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Build the Box with Cubes</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build the Box with Cubes</title>
 
-  <style>
-    * { box-sizing: border-box; }
+<style>
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8fafc;
-      color: #1f2937;
-    }
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f8fafc;
+}
 
-    .header {
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 18px 24px;
-    }
+.header {
+  background: white;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
 
-    .header h1 {
-      margin: 0;
-      font-size: 28px;
-      color: #ec4899;
-    }
+.header h1 {
+  margin: 0;
+  color: #ec4899;
+}
 
-    .header p {
-      margin: 6px 0 0;
-      color: #6b7280;
-      font-size: 14px;
-    }
+.layout {
+  display: flex;
+  height: calc(100vh - 70px);
+}
 
-    .layout {
-      display: flex;
-      min-height: calc(100vh - 86px);
-    }
+.left-panel {
+  width: 240px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  padding: 14px;
+}
 
-    .panel {
-      background: white;
-      padding: 16px;
-      overflow-y: auto;
-    }
+.main {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
 
-    .left-panel {
-      width: 240px;
-      border-right: 1px solid #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+.canvas-wrap {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10px;
+}
 
-    .right-panel {
-      width: 260px;
-      border-left: 1px solid #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+.canvas-card {
+  width: 700px;
+  height: 500px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+}
 
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 16px;
-      min-width: 0;
-      background: #f1f5f9;
-    }
+#scene {
+  width: 100%;
+  height: 100%;
+}
 
-    .section-title {
-      font-size: 14px;
-      font-weight: 700;
-      margin: 0 0 6px 0;
-    }
+.button-row {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
 
-    .section-subtext {
-      font-size: 12px;
-      color: #6b7280;
-      margin: 0;
-    }
+button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
 
-    .cube-options {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+.primary {
+  background: #8b5cf6;
+  color: white;
+}
 
-    .cube-option {
-      border: 2px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 12px;
-      cursor: pointer;
-      transition: 0.2s;
-      background: #fafafa;
-    }
+.secondary {
+  background: white;
+  border: 1px solid #ccc;
+}
 
-    .cube-option:hover {
-      transform: translateY(-1px);
-      border-color: #c4b5fd;
-    }
+/* ===== NEW 3D CUBE STYLES ===== */
 
-    .cube-option.selected {
-      border-color: #8b5cf6;
-      background: #f5f3ff;
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
-    }
+.cube-option {
+  border: 2px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 12px;
+  text-align: center;
+  cursor: pointer;
+  background: #fafafa;
+}
 
-    .cube-preview {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #a78bfa, #7c3aed);
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
+.cube-option.selected {
+  border-color: #8b5cf6;
+  background: #f5f3ff;
+}
 
-    .help-box {
-      margin-top: auto;
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-      border-radius: 14px;
-      padding: 12px;
-      font-size: 12px;
-      color: #4b5563;
-      line-height: 1.5;
-    }
+.cube-preview-wrap {
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .top-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 12px;
-    }
+.cube3d {
+  position: relative;
+}
 
-    .tab-label {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-right: 4px;
-    }
+.face {
+  position: absolute;
+}
 
-    #boxTabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+.front {
+  width: 70%;
+  height: 70%;
+  bottom: 0;
+  left: 0;
+}
 
-    .tab-btn {
-      border: none;
-      background: #f3f4f6;
-      color: #4b5563;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+.top {
+  width: 70%;
+  height: 35%;
+  top: 0;
+  left: 0;
+  clip-path: polygon(0 50%, 50% 0, 100% 50%, 50% 100%);
+}
 
-    .tab-btn.active {
-      background: #8b5cf6;
-      color: white;
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-    }
+.side {
+  width: 35%;
+  height: 70%;
+  right: 0;
+  bottom: 0;
+  clip-path: polygon(0 25%, 100% 0, 100% 75%, 0 100%);
+}
 
-    .selected-pill {
-      margin-left: auto;
-      font-size: 12px;
-      background: #f3f4f6;
-      color: #4b5563;
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-weight: 700;
-    }
+</style>
 
-    .canvas-wrap {
-      flex: 1;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding-top: 4px;
-      min-height: 500px;
-    }
-
-    .canvas-card {
-      width: 100%;
-      max-width: 760px;
-      height: 520px;
-      background: linear-gradient(180deg, #ffffff, #f8fafc);
-      border: 1px solid #e5e7eb;
-      border-radius: 20px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-      position: relative;
-      overflow: hidden;
-    }
-
-    #scene {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: grab;
-    }
-
-    #scene:active {
-      cursor: grabbing;
-    }
-
-    .button-row {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    button.action {
-      border: none;
-      border-radius: 14px;
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .primary {
-      background: #8b5cf6;
-      color: white;
-      box-shadow: 0 8px 18px rgba(139, 92, 246, 0.25);
-    }
-
-    .primary:hover {
-      background: #7c3aed;
-    }
-
-    .secondary {
-      background: white;
-      color: #374151;
-      border: 1px solid #d1d5db;
-    }
-
-    .secondary:hover {
-      background: #f9fafb;
-    }
-
-    .stat-card {
-      background: #f9fafb;
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
-      font-size: 17px;
-      font-weight: 700;
-      color: #1f2937;
-      line-height: 1.3;
-    }
-
-    .success-box {
-      background: #ecfdf5;
-      border: 1px solid #bbf7d0;
-      border-radius: 14px;
-      padding: 12px;
-      color: #15803d;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .summary {
-      margin-top: auto;
-      padding-top: 14px;
-      border-top: 1px solid #f1f5f9;
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .summary-row strong {
-      color: #1f2937;
-    }
-
-    .hint-overlay {
-      position: absolute;
-      left: 16px;
-      bottom: 16px;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 12px;
-      color: #4b5563;
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
-      pointer-events: none;
-    }
-
-    @media (max-width: 1024px) {
-      .layout {
-        flex-direction: column;
-      }
-
-      .left-panel,
-      .right-panel {
-        width: 100%;
-        border: none;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      .selected-pill {
-        margin-left: 0;
-      }
-
-      .cube-options {
-        flex-direction: row;
-      }
-
-      .canvas-card {
-        height: 420px;
-      }
-    }
-  </style>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
 </head>
+
 <body>
-  <div class="header">
-    <h1>Build the Box with Cubes!</h1>
-    <p>Choose a cube, choose a box, and see how many cubes fit inside.</p>
+
+<div class="header">
+  <h1>Build the Box with Cubes!</h1>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="left-panel" id="cubeOptions"></div>
+
+  <!-- CENTER -->
+  <div class="main">
+    <div class="canvas-wrap">
+      <div class="canvas-card">
+        <canvas id="scene"></canvas>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button class="primary" id="addCube">+ Add Cube</button>
+      <button class="secondary" id="undo">Undo</button>
+      <button class="secondary" id="reset">Reset</button>
+    </div>
   </div>
 
-  <div class="layout">
-    <aside class="panel left-panel">
-      <div>
-        <p class="section-title">Cube Shelf</p>
-        <p class="section-subtext">Pick a cube size. Bigger cubes take up more space.</p>
-      </div>
+</div>
 
-      <div class="cube-options" id="cubeOptions"></div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-      <div class="help-box">
-        <strong>How to play:</strong><br>
-        1. Pick a cube size.<br>
-        2. Pick a box.<br>
-        3. Click <strong>Add Cube</strong>.<br>
-        4. Drag to rotate the box.<br>
-        5. Use <strong>Undo</strong> or <strong>Reset Box</strong>.
-      </div>
-    </aside>
+const cubeOptionsEl = document.getElementById('cubeOptions');
 
-    <main class="main">
-      <div class="top-bar">
-        <span class="tab-label">Box</span>
-        <div id="boxTabs"></div>
-        <div class="selected-pill" id="selectedCubeText">Selected cube: 2 cm</div>
-      </div>
+const CUBE_SIZES = [1,2,3];
+let selectedCube = 2;
 
-      <div class="canvas-wrap">
-        <div class="canvas-card">
-          <canvas id="scene"></canvas>
-          <div class="hint-overlay">Drag to rotate the box</div>
+/* ===== NEW RENDER FUNCTION ===== */
+function renderCubeOptions() {
+  cubeOptionsEl.innerHTML = '';
+
+  const styles = {
+    1: { size:50, front:'#3b82f6', top:'#60a5fa', side:'#2563eb' },
+    2: { size:65, front:'#22c55e', top:'#4ade80', side:'#16a34a' },
+    3: { size:80, front:'#f97316', top:'#fb923c', side:'#ea580c' }
+  };
+
+  CUBE_SIZES.forEach(size=>{
+    const s = styles[size];
+
+    const div = document.createElement('div');
+    div.className = 'cube-option'+(selectedCube===size?' selected':'');
+
+    div.innerHTML = `
+      <div class="cube-preview-wrap">
+        <div class="cube3d" style="width:${s.size}px;height:${s.size}px;">
+          <div class="face top" style="background:${s.top}"></div>
+          <div class="face side" style="background:${s.side}"></div>
+          <div class="face front" style="background:${s.front}"></div>
         </div>
       </div>
+      <div><b>${size} cm cube</b></div>
+      <div style="font-size:12px;color:#666;">Volume: ${size**3}</div>
+    `;
 
-      <div class="button-row">
-        <button class="action primary" id="addCubeBtn">+ Add Cube</button>
-        <button class="action secondary" id="undoBtn">Undo</button>
-        <button class="action secondary" id="resetBtn">Reset Box</button>
-      </div>
-    </main>
-
-    <aside class="panel right-panel">
-      <p class="section-title">Your Results</p>
-
-      <div class="stat-card">
-        <div class="stat-label">Box dimensions</div>
-        <div class="stat-value" id="boxDimensions">-</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Selected cube volume</div>
-        <div class="stat-value" id="cubeVolume">-</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Number of cubes by length</div>
-        <div class="stat-value" id="lengthCount">-</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Number of cubes by breadth</div>
-        <div class="stat-value" id="breadthCount">-</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Number of cubes by height</div>
-        <div class="stat-value" id="heightCount">-</div>
-      </div>
-
-      <div id="lastAddedBox"></div>
-
-      <div class="summary">
-        <div class="summary-row">
-          <span>Total box volume</span>
-          <strong id="totalVol">-</strong>
-        </div>
-        <div class="summary-row">
-          <span>Used</span>
-          <strong id="usedVol">-</strong>
-        </div>
-        <div class="summary-row">
-          <span>Remaining</span>
-          <strong id="remainingVol">-</strong>
-        </div>
-      </div>
-    </aside>
-  </div>
-
-  <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-    const BOXES = [
-      { width: 6, depth: 6, height: 12, label: 'Box 1 (6 × 6 × 12)' },
-      { width: 9, depth: 15, height: 9, label: 'Box 2 (9 × 15 × 9)' },
-      { width: 6, depth: 8, height: 7, label: 'Box 3 (6 × 8 × 7)' }
-    ];
-
-    const CUBE_SIZES = [1, 2, 3];
-
-    let activeBox = 0;
-    let selectedCube = 2;
-    let cubesMap = { 0: [], 1: [], 2: [] };
-    let lastAdded = null;
-
-    const cubeOptionsEl = document.getElementById('cubeOptions');
-    const boxTabsEl = document.getElementById('boxTabs');
-    const selectedCubeText = document.getElementById('selectedCubeText');
-    const boxDimensions = document.getElementById('boxDimensions');
-    const cubeVolume = document.getElementById('cubeVolume');
-    const lengthCount = document.getElementById('lengthCount');
-    const breadthCount = document.getElementById('breadthCount');
-    const heightCount = document.getElementById('heightCount');
-    const totalVolEl = document.getElementById('totalVol');
-    const usedVolEl = document.getElementById('usedVol');
-    const remainingVolEl = document.getElementById('remainingVol');
-    const lastAddedBox = document.getElementById('lastAddedBox');
-
-    const addCubeBtn = document.getElementById('addCubeBtn');
-    const undoBtn = document.getElementById('undoBtn');
-    const resetBtn = document.getElementById('resetBtn');
-
-    function getCurrentBox() {
-      return BOXES[activeBox];
-    }
-
-    function getCurrentCubes() {
-      return cubesMap[activeBox] || [];
-    }
-
-    function getTotalVolume() {
-      const box = getCurrentBox();
-      return box.width * box.depth * box.height;
-    }
-
-    function getUsedVolume() {
-      return getCurrentCubes().reduce((sum, c) => sum + c.size ** 3, 0);
-    }
-
-    function cubesAlongAxis(dim) {
-      return Math.floor(dim / selectedCube);
-    }
-
-    function isOccupied(placedCubes, x, y, z, size) {
-      return placedCubes.some(c =>
-        x < c.x + c.size && x + size > c.x &&
-        y < c.y + c.size && y + size > c.y &&
-        z < c.z + c.size && z + size > c.z
-      );
-    }
-
-    function findPlacement(box, placedCubes, cubeSize) {
-      for (let z = 0; z + cubeSize <= box.height; z++) {
-        for (let y = 0; y + cubeSize <= box.depth; y++) {
-          for (let x = 0; x + cubeSize <= box.width; x++) {
-            if (!isOccupied(placedCubes, x, y, z, cubeSize)) {
-              return { x, y, z, size: cubeSize };
-            }
-          }
-        }
-      }
-      return null;
-    }
-
-    function renderCubeOptions() {
-      cubeOptionsEl.innerHTML = '';
-      CUBE_SIZES.forEach(size => {
-        const div = document.createElement('div');
-        div.className = 'cube-option' + (selectedCube === size ? ' selected' : '');
-        div.innerHTML = `
-          <div class="cube-preview"></div>
-          <div style="font-weight:700;">${size} cm cube</div>
-          <div style="font-size:12px; color:#6b7280; margin-top:4px;">Volume: ${size ** 3} cm³</div>
-        `;
-        div.onclick = () => {
-          selectedCube = size;
-          renderUI();
-        };
-        cubeOptionsEl.appendChild(div);
-      });
-    }
-
-    function renderBoxTabs() {
-      boxTabsEl.innerHTML = '';
-      BOXES.forEach((box, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'tab-btn' + (activeBox === i ? ' active' : '');
-        btn.textContent = box.label;
-        btn.onclick = () => {
-          activeBox = i;
-          lastAdded = null;
-          renderUI();
-          rebuildScene();
-        };
-        boxTabsEl.appendChild(btn);
-      });
-    }
-
-    function renderStats() {
-      const box = getCurrentBox();
-      const totalVol = getTotalVolume();
-      const usedVol = getUsedVolume();
-
-      selectedCubeText.textContent = `Selected cube: ${selectedCube} cm`;
-      boxDimensions.textContent = `${box.width} cm by ${box.depth} cm by ${box.height} cm`;
-      cubeVolume.textContent = `${selectedCube ** 3} cm³`;
-      lengthCount.textContent = cubesAlongAxis(box.width);
-      breadthCount.textContent = cubesAlongAxis(box.depth);
-      heightCount.textContent = cubesAlongAxis(box.height);
-      totalVolEl.textContent = `${totalVol} cm³`;
-      usedVolEl.textContent = `${usedVol} cm³`;
-      remainingVolEl.textContent = `${totalVol - usedVol} cm³`;
-
-      if (lastAdded) {
-        lastAddedBox.innerHTML = `
-          <div class="success-box">
-            Great! A ${lastAdded.size} cm cube was added.
-          </div>
-        `;
-      } else {
-        lastAddedBox.innerHTML = '';
-      }
-    }
-
-    function renderUI() {
+    div.onclick = ()=>{
+      selectedCube = size;
       renderCubeOptions();
-      renderBoxTabs();
-      renderStats();
-    }
-
-    addCubeBtn.onclick = () => {
-      const box = getCurrentBox();
-      const currentCubes = getCurrentCubes();
-      const totalVol = getTotalVolume();
-      const usedVol = getUsedVolume();
-      const nextVol = selectedCube ** 3;
-
-      if (usedVol + nextVol > totalVol) {
-        alert('Not enough space!');
-        return;
-      }
-
-      const placement = findPlacement(box, currentCubes, selectedCube);
-      if (!placement) {
-        alert("Can't fit this cube right now.");
-        return;
-      }
-
-      cubesMap[activeBox].push(placement);
-      lastAdded = placement;
-      rebuildScene();
-      renderUI();
     };
 
-    undoBtn.onclick = () => {
-      if (cubesMap[activeBox].length > 0) {
-        cubesMap[activeBox].pop();
-        lastAdded = null;
-        rebuildScene();
-        renderUI();
-      }
-    };
+    cubeOptionsEl.appendChild(div);
+  });
+}
 
-    resetBtn.onclick = () => {
-      cubesMap[activeBox] = [];
-      lastAdded = null;
-      rebuildScene();
-      renderUI();
-    };
+/* ===== 3D SCENE ===== */
 
-    const canvas = document.getElementById('scene');
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: true
-    });
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45,1,0.1,1000);
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+camera.position.set(20,20,20);
 
-    const scene = new THREE.Scene();
-    scene.background = null;
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
 
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-    camera.position.set(18, 16, 22);
+scene.add(new THREE.AmbientLight(0xffffff,1));
 
-    const controls = new OrbitControls(camera, canvas);
-    controls.enableDamping = true;
-    controls.enablePan = false;
-    controls.minDistance = 10;
-    controls.maxDistance = 50;
-    controls.target.set(0, 4, 0);
+const group = new THREE.Group();
+scene.add(group);
 
-    const ambient = new THREE.AmbientLight(0xffffff, 1.1);
-    scene.add(ambient);
+function rebuild(){
+  while(group.children.length){
+    group.remove(group.children[0]);
+  }
 
-    const dir1 = new THREE.DirectionalLight(0xffffff, 1.0);
-    dir1.position.set(20, 30, 20);
-    scene.add(dir1);
+  const geo = new THREE.BoxGeometry(10,10,10);
+  const mat = new THREE.MeshBasicMaterial({color:0xcccccc, wireframe:true});
+  const box = new THREE.Mesh(geo, mat);
+  box.position.y=5;
+  group.add(box);
+}
 
-    const dir2 = new THREE.DirectionalLight(0xffffff, 0.45);
-    dir2.position.set(-20, 15, -15);
-    scene.add(dir2);
+function resize(){
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  renderer.setSize(w,h,false);
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
+}
 
-    const group = new THREE.Group();
-    scene.add(group);
+window.addEventListener('resize', resize);
 
-    function clearGroup() {
-      while (group.children.length) {
-        const child = group.children[0];
-        group.remove(child);
-        if (child.geometry) child.geometry.dispose();
-        if (child.material) {
-          if (Array.isArray(child.material)) {
-            child.material.forEach(m => m.dispose());
-          } else {
-            child.material.dispose();
-          }
-        }
-      }
-    }
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene,camera);
+}
 
-    function makeBoxFrame(box) {
-      const geometry = new THREE.BoxGeometry(box.width, box.height, box.depth);
+renderCubeOptions();
+resize();
+rebuild();
+animate();
 
-      const transparentBox = new THREE.Mesh(
-        geometry,
-        new THREE.MeshPhongMaterial({
-          color: 0xcbd5e1,
-          transparent: true,
-          opacity: 0.16,
-          side: THREE.DoubleSide
-        })
-      );
-      transparentBox.position.set(0, box.height / 2, 0);
-      group.add(transparentBox);
+</script>
 
-      const edges = new THREE.EdgesGeometry(geometry);
-      const line = new THREE.LineSegments(
-        edges,
-        new THREE.LineBasicMaterial({ color: 0x64748b })
-      );
-      line.position.set(0, box.height / 2, 0);
-      group.add(line);
-    }
-
-    function makePlacedCubes(box, placedCubes) {
-      placedCubes.forEach(c => {
-        const geo = new THREE.BoxGeometry(c.size, c.size, c.size);
-        const mat = new THREE.MeshPhongMaterial({
-          color: 0x8b5cf6
-        });
-        const mesh = new THREE.Mesh(geo, mat);
-
-        const x = -box.width / 2 + c.x + c.size / 2;
-        const y = c.z + c.size / 2;
-        const z = -box.depth / 2 + c.y + c.size / 2;
-
-        mesh.position.set(x, y, z);
-        group.add(mesh);
-
-        const edge = new THREE.LineSegments(
-          new THREE.EdgesGeometry(geo),
-          new THREE.LineBasicMaterial({ color: 0x5b21b6 })
-        );
-        edge.position.copy(mesh.position);
-        group.add(edge);
-      });
-    }
-
-    function addBaseGrid(box) {
-      const size = Math.max(box.width, box.depth) + 4;
-      const divisions = Math.max(box.width, box.depth) + 4;
-      const grid = new THREE.GridHelper(size, divisions, 0xe2e8f0, 0xe2e8f0);
-      grid.position.y = 0;
-      group.add(grid);
-    }
-
-    function rebuildScene() {
-      clearGroup();
-
-      const box = getCurrentBox();
-      const cubes = getCurrentCubes();
-
-      makeBoxFrame(box);
-      makePlacedCubes(box, cubes);
-      addBaseGrid(box);
-
-      controls.target.set(0, box.height / 2, 0);
-
-      const maxDim = Math.max(box.width, box.depth, box.height);
-      camera.position.set(maxDim * 1.8, box.height * 1.1 + 4, maxDim * 1.9);
-      camera.lookAt(0, box.height / 2, 0);
-
-      controls.update();
-    }
-
-    function resizeRenderer() {
-      const rect = canvas.getBoundingClientRect();
-      const width = Math.max(300, rect.width);
-      const height = Math.max(300, rect.height);
-
-      renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-    }
-
-    window.addEventListener('resize', resizeRenderer);
-
-    function animate() {
-      requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    }
-
-    renderUI();
-    resizeRenderer();
-    rebuildScene();
-    animate();
-  </script>
 </body>
 </html>
