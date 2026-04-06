@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fill the Box with Cubes</title>
+  <style>
+    :root{
+      --bg1:#f3f8ff;
+      --bg2:#fff8e8;
+      --panel:#ffffff;
+      --line:#cfd8e3;
+      --text:#24324a;
+      --muted:#5d6b82;
+      --accent:#4f8cff;
+      --accent2:#ffb648;
+      --good:#2bb673;
+      --danger:#e85d5d;
+      --cube1:#7cc6ff;
+      --cube2:#7ee0a0;
+      --cube3:#ffb86b;
+      --shadow:0 10px 24px rgba(31, 60, 114, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .title-card {
+      background: var(--panel);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin: 0 0 12px;
+    }
+
+    .box-buttons,
+    .cube-buttons,
+    .action-buttons,
+    .layer-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.12s ease, background 0.12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(1px); }
+
+    .btn {
+      background: #eef4ff;
+      color: var(--text);
+    }
+
+    .btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .cube-btn[data-size="1"] { background: rgba(124,198,255,0.25); }
+    .cube-btn[data-size="2"] { background: rgba(126,224,160,0.25); }
+    .cube-btn[data-size="3"] { background: rgba(255,184,107,0.3); }
+
+    .cube-btn.active[data-size="1"] { background: var(--cube1); color: #08345a; }
+    .cube-btn.active[data-size="2"] { background: var(--cube2); color: #124224; }
+    .cube-btn.active[data-size="3"] { background: var(--cube3); color: #5a2d00; }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      margin-top: 10px;
+    }
+
+    .stats {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .stat {
+      background: #f8fbff;
+      border: 1px solid #e3ebf6;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .big-number {
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .progress-shell {
+      background: #edf3fb;
+      height: 18px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--good));
+      transition: width 0.2s ease;
+    }
+
+    .workspace {
+      display: grid;
+      gap: 16px;
+    }
+
+    .top-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .badge {
+      background: #f5f8fe;
+      border: 1px solid #e3ebf6;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .grid-area {
+      overflow: auto;
+      border: 1px solid #dbe5f1;
+      border-radius: 18px;
+      padding: 14px;
+      background: linear-gradient(180deg, #fbfdff, #f4f8fd);
+      min-height: 520px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 2px;
+      width: max-content;
+      margin: 0 auto;
+      background: #b9cbe2;
+      padding: 2px;
+      border-radius: 12px;
+      user-select: none;
+    }
+
+    .cell {
+      width: 28px;
+      height: 28px;
+      background: white;
+      border-radius: 5px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.08s ease, filter 0.08s ease;
+    }
+
+    .cell:hover {
+      transform: scale(1.02);
+      filter: brightness(0.98);
+    }
+
+    .cell.preview-valid {
+      outline: 3px solid rgba(43, 182, 115, 0.45);
+      z-index: 1;
+    }
+
+    .cell.preview-invalid {
+      outline: 3px solid rgba(232, 93, 93, 0.4);
+      z-index: 1;
+    }
+
+    .filled-1 { background: var(--cube1); }
+    .filled-2 { background: var(--cube2); }
+    .filled-3 { background: var(--cube3); }
+
+    .cell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 5px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35);
+      pointer-events: none;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fbff;
+      border: 1px solid #e3ebf6;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+    }
+
+    .message {
+      margin-top: 12px;
+      min-height: 24px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .message.good { color: var(--good); }
+    .message.bad { color: var(--danger); }
+    .message.info { color: var(--muted); }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .grid-area {
+        min-height: 420px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title-card">
+      <h1>Fill the Box with Cubes</h1>
+      <p class="subtitle">
+        Choose a box, pick a cube size, and fill the box layer by layer.
+        Try to see which cubes fit well and which spaces are left over.
+      </p>
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <h2 class="section-title">1. Choose a Box</h2>
+        <div class="box-buttons" id="boxButtons"></div>
+
+        <h2 class="section-title" style="margin-top:18px;">2. Choose a Cube</h2>
+        <div class="cube-buttons">
+          <button class="cube-btn" data-size="1">1 cm cube</button>
+          <button class="cube-btn" data-size="2">2 cm cube</button>
+          <button class="cube-btn" data-size="3">3 cm cube</button>
+        </div>
+        <div class="small-note">
+          A cube with side length 2 cm takes up a space of 2 × 2 × 2.  
+          A cube with side length 3 cm takes up a space of 3 × 3 × 3.
+        </div>
+
+        <h2 class="section-title" style="margin-top:18px;">3. Try It Out</h2>
+        <div class="action-buttons">
+          <button class="btn" id="undoBtn">Undo Last Cube</button>
+          <button class="btn" id="resetBtn">Reset This Box</button>
+          <button class="btn" id="showAnswerBtn">Show Max Number</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <strong>Box dimensions</strong>
+            <div id="dimensionText" class="big-number" style="font-size:22px;">6 × 6 × 12</div>
+          </div>
+
+          <div class="stat">
+            <strong>Total volume of box</strong>
+            <div id="totalVolumeText" class="big-number">432 cm³</div>
+          </div>
+
+          <div class="stat">
+            <strong>Filled volume</strong>
+            <div id="filledVolumeText" class="big-number">0 cm³</div>
+            <div class="progress-shell">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+
+          <div class="stat">
+            <strong>Cubes placed</strong>
+            <div id="placedText" class="big-number">0</div>
+          </div>
+
+          <div class="stat">
+            <strong>Layer you are viewing</strong>
+            <div id="layerText" class="big-number" style="font-size:22px;">Layer 1</div>
+          </div>
+        </div>
+
+        <div class="footer-note">
+          Tip: Click a square in the grid to place your chosen cube.  
+          Bigger cubes can only fit where there is enough room in length, width and height.
+        </div>
+      </div>
+
+      <div class="panel workspace">
+        <div class="top-strip">
+          <div class="badge" id="selectedBoxBadge">Box 1</div>
+          <div class="badge" id="selectedCubeBadge">Selected cube: 1 cm</div>
+        </div>
+
+        <div>
+          <h2 class="section-title" style="margin-bottom:10px;">Choose a Layer</h2>
+          <div class="layer-buttons" id="layerButtons"></div>
+        </div>
+
+        <div class="grid-area">
+          <div id="grid" class="grid"></div>
+
+          <div class="legend">
+            <div class="legend-item"><span class="swatch" style="background:var(--cube1)"></span>1 cm cube</div>
+            <div class="legend-item"><span class="swatch" style="background:var(--cube2)"></span>2 cm cube</div>
+            <div class="legend-item"><span class="swatch" style="background:var(--cube3)"></span>3 cm cube</div>
+          </div>
+
+          <div id="message" class="message info">Start filling the box.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const boxes = [
+      { name: "Box 1", l: 6, w: 6, h: 12 },
+      { name: "Box 2", l: 9, w: 15, h: 9 },
+      { name: "Box 3", l: 6, w: 8, h: 7 }
+    ];
+
+    let currentBoxIndex = 0;
+    let selectedCube = 1;
+    let currentLayer = 0;
+
+    const states = boxes.map(box => ({
+      cells: create3DArray(box.l, box.w, box.h),
+      placed: [],
+      filledVolume: 0
+    }));
+
+    const boxButtons = document.getElementById("boxButtons");
+    const cubeButtons = [...document.querySelectorAll(".cube-btn")];
+    const layerButtons = document.getElementById("layerButtons");
+    const grid = document.getElementById("grid");
+    const message = document.getElementById("message");
+
+    const dimensionText = document.getElementById("dimensionText");
+    const totalVolumeText = document.getElementById("totalVolumeText");
+    const filledVolumeText = document.getElementById("filledVolumeText");
+    const placedText = document.getElementById("placedText");
+    const layerText = document.getElementById("layerText");
+    const progressBar = document.getElementById("progressBar");
+    const selectedBoxBadge = document.getElementById("selectedBoxBadge");
+    const selectedCubeBadge = document.getElementById("selectedCubeBadge");
+
+    const undoBtn = document.getElementById("undoBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const showAnswerBtn = document.getElementById("showAnswerBtn");
+
+    function create3DArray(l, w, h) {
+      return Array.from({ length: h }, () =>
+        Array.from({ length: w }, () =>
+          Array.from({ length: l }, () => 0)
+        )
+      );
+    }
+
+    function getBox() {
+      return boxes[currentBoxIndex];
+    }
+
+    function getState() {
+      return states[currentBoxIndex];
+    }
+
+    function updateBoxButtons() {
+      boxButtons.innerHTML = "";
+      boxes.forEach((box, i) => {
+        const btn = document.createElement("button");
+        btn.className = "btn" + (i === currentBoxIndex ? " active" : "");
+        btn.textContent = `${box.name} (${box.l} × ${box.w} × ${box.h})`;
+        btn.addEventListener("click", () => {
+          currentBoxIndex = i;
+          currentLayer = 0;
+          updateUI();
+          setMessage("Switched to " + box.name + ".", "info");
+        });
+        boxButtons.appendChild(btn);
+      });
+    }
+
+    function updateCubeButtons() {
+      cubeButtons.forEach(btn => {
+        const size = Number(btn.dataset.size);
+        btn.classList.toggle("active", size === selectedCube);
+      });
+      selectedCubeBadge.textContent = `Selected cube: ${selectedCube} cm`;
+    }
+
+    cubeButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        selectedCube = Number(btn.dataset.size);
+        updateCubeButtons();
+        setMessage(`You selected the ${selectedCube} cm cube.`, "info");
+        renderGrid();
+      });
+    });
+
+    function updateLayerButtons() {
+      const box = getBox();
+      layerButtons.innerHTML = "";
+      for (let z = 0; z < box.h; z++) {
+        const btn = document.createElement("button");
+        btn.className = "btn" + (z === currentLayer ? " active" : "");
+        btn.textContent = `Layer ${z + 1}`;
+        btn.addEventListener("click", () => {
+          currentLayer = z;
+          updateLayerButtons();
+          renderGrid();
+          updateStats();
+        });
+        layerButtons.appendChild(btn);
+      }
+    }
+
+    function updateStats() {
+      const box = getBox();
+      const state = getState();
+      const totalVol = box.l * box.w * box.h;
+
+      dimensionText.textContent = `${box.l} × ${box.w} × ${box.h}`;
+      totalVolumeText.textContent = `${totalVol} cm³`;
+      filledVolumeText.textContent = `${state.filledVolume} cm³`;
+      placedText.textContent = `${state.placed.length}`;
+      layerText.textContent = `Layer ${currentLayer + 1}`;
+      selectedBoxBadge.textContent = box.name;
+
+      const pct = Math.round((state.filledVolume / totalVol) * 100);
+      progressBar.style.width = pct + "%";
+    }
+
+    function setMessage(text, type = "info") {
+      message.textContent = text;
+      message.className = "message " + type;
+    }
+
+    function canPlaceCubeAt(x, y, z, size) {
+      const box = getBox();
+      const state = getState();
+
+      if (x + size > box.l || y + size > box.w || z + size > box.h) return false;
+
+      for (let zz = z; zz < z + size; zz++) {
+        for (let yy = y; yy < y + size; yy++) {
+          for (let xx = x; xx < x + size; xx++) {
+            if (state.cells[zz][yy][xx] !== 0) return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    function placeCubeAt(x, y, z, size) {
+      const state = getState();
+      if (!canPlaceCubeAt(x, y, z, size)) {
+        setMessage("That cube cannot fit there.", "bad");
+        return;
+      }
+
+      const id = Date.now() + Math.random();
+      for (let zz = z; zz < z + size; zz++) {
+        for (let yy = y; yy < y + size; yy++) {
+          for (let xx = x; xx < x + size; xx++) {
+            state.cells[zz][yy][xx] = size;
+          }
+        }
+      }
+
+      state.placed.push({ id, x, y, z, size });
+      state.filledVolume += size * size * size;
+
+      updateUI(false);
+      setMessage(
+        `Great! You placed a ${size} cm cube. It used ${size * size * size} cm³.`,
+        "good"
+      );
+    }
+
+    function undoLastCube() {
+      const state = getState();
+      const last = state.placed.pop();
+
+      if (!last) {
+        setMessage("There is nothing to undo.", "info");
+        return;
+      }
+
+      for (let zz = last.z; zz < last.z + last.size; zz++) {
+        for (let yy = last.y; yy < last.y + last.size; yy++) {
+          for (let xx = last.x; xx < last.x + last.size; xx++) {
+            state.cells[zz][yy][xx] = 0;
+          }
+        }
+      }
+
+      state.filledVolume -= last.size * last.size * last.size;
+      updateUI(false);
+      setMessage("Last cube removed.", "info");
+    }
+
+    function resetCurrentBox() {
+      const box = getBox();
+      states[currentBoxIndex] = {
+        cells: create3DArray(box.l, box.w, box.h),
+        placed: [],
+        filledVolume: 0
+      };
+      currentLayer = 0;
+      updateUI();
+      setMessage("This box has been reset.", "info");
+    }
+
+    function showAnswer() {
+      const box = getBox();
+      const total = box.l * box.w * box.h;
+
+      const max1 = Math.floor(box.l / 1) * Math.floor(box.w / 1) * Math.floor(box.h / 1);
+      const max2 = Math.floor(box.l / 2) * Math.floor(box.w / 2) * Math.floor(box.h / 2);
+      const max3 = Math.floor(box.l / 3) * Math.floor(box.w / 3) * Math.floor(box.h / 3);
+
+      setMessage(
+        `Max if using only 1 cm cubes: ${max1}. Max if using only 2 cm cubes: ${max2}. Max if using only 3 cm cubes: ${max3}. Total volume = ${total} cm³.`,
+        "good"
+      );
+    }
+
+    function renderGrid() {
+      const box = getBox();
+      const state = getState();
+
+      grid.innerHTML = "";
+      grid.style.gridTemplateColumns = `repeat(${box.l}, 28px)`;
+
+      for (let y = 0; y < box.w; y++) {
+        for (let x = 0; x < box.l; x++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+
+          const value = state.cells[currentLayer][y][x];
+          if (value) cell.classList.add("filled-" + value);
+
+          cell.dataset.x = x;
+          cell.dataset.y = y;
+
+          cell.addEventListener("mouseenter", () => previewPlacement(x, y));
+          cell.addEventListener("mouseleave", clearPreview);
+          cell.addEventListener("click", () => placeCubeAt(x, y, currentLayer, selectedCube));
+
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    function previewPlacement(x, y) {
+      clearPreview();
+      const box = getBox();
+      const valid = canPlaceCubeAt(x, y, currentLayer, selectedCube);
+
+      for (let yy = y; yy < Math.min(y + selectedCube, box.w); yy++) {
+        for (let xx = x; xx < Math.min(x + selectedCube, box.l); xx++) {
+          const idx = yy * box.l + xx;
+          const cell = grid.children[idx];
+          if (cell) {
+            cell.classList.add(valid ? "preview-valid" : "preview-invalid");
+          }
+        }
+      }
+    }
+
+    function clearPreview() {
+      [...grid.children].forEach(cell => {
+        cell.classList.remove("preview-valid", "preview-invalid");
+      });
+    }
+
+    function updateUI(rebuildLayers = true) {
+      updateBoxButtons();
+      updateCubeButtons();
+      if (rebuildLayers) updateLayerButtons();
+      renderGrid();
+      updateStats();
+    }
+
+    undoBtn.addEventListener("click", undoLastCube);
+    resetBtn.addEventListener("click", resetCurrentBox);
+    showAnswerBtn.addEventListener("click", showAnswer);
+
+    updateUI();
+  </script>
+</body>
+</html>
