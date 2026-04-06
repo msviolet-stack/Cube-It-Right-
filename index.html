@@ -8,30 +8,32 @@
     :root {
       --sky1: #dff6ff;
       --sky2: #fff7d6;
-      --card: rgba(255,255,255,0.92);
+      --card: rgba(255,255,255,0.94);
       --text: #35425b;
       --accent: #ff7aa2;
       --accent2: #7a8cff;
       --accent3: #64d7a6;
       --line: #dbe4f0;
-      --shadow: 0 12px 30px rgba(78, 96, 140, 0.18);
-      --cube1-front: #8fd6ff;
-      --cube1-side: #5cb8ee;
-      --cube1-top: #c9ecff;
-      --cube2-front: #8be6b3;
-      --cube2-side: #58c987;
-      --cube2-top: #c7f5d8;
-      --cube3-front: #ffc17d;
-      --cube3-side: #f19a42;
-      --cube3-top: #ffe0bc;
+      --shadow: 0 14px 34px rgba(78, 96, 140, 0.18);
+      --cube1-front: #7fd0ff;
+      --cube1-side: #45aee8;
+      --cube1-top: #d9f4ff;
+      --cube2-front: #8ee8a8;
+      --cube2-side: #53c97b;
+      --cube2-top: #ddfae7;
+      --cube3-front: #ffc87f;
+      --cube3-side: #ee9740;
+      --cube3-top: #fff0d7;
       --box-front: #fff0b8;
       --box-side: #f5d97d;
       --box-top: #fff8d9;
       --good: #25a85c;
       --bad: #e95b5b;
+      --toy-outline: #ffffff;
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -55,7 +57,7 @@
       padding: 20px 24px;
       box-shadow: var(--shadow);
       margin-bottom: 18px;
-      border: 3px solid rgba(255,255,255,0.6);
+      border: 3px solid rgba(255,255,255,0.7);
     }
 
     .hero h1 {
@@ -73,7 +75,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 290px 1fr 330px;
+      grid-template-columns: 300px 1fr 320px;
       gap: 18px;
       align-items: start;
     }
@@ -83,7 +85,7 @@
       border-radius: 28px;
       box-shadow: var(--shadow);
       padding: 18px;
-      border: 3px solid rgba(255,255,255,0.58);
+      border: 3px solid rgba(255,255,255,0.66);
     }
 
     .panel h2 {
@@ -106,19 +108,20 @@
     }
 
     .cube-choice {
-      border: 3px solid transparent;
-      background: linear-gradient(180deg, #ffffff, #f6fbff);
-      border-radius: 22px;
-      padding: 12px;
+      border: 4px solid transparent;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border-radius: 26px;
+      padding: 14px;
       cursor: pointer;
       transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: 0 8px 18px rgba(118, 143, 176, 0.12);
+      box-shadow: 0 10px 20px rgba(118, 143, 176, 0.12), inset 0 3px 0 rgba(255,255,255,0.95);
     }
 
-    .cube-choice:hover { transform: translateY(-2px); }
+    .cube-choice:hover { transform: translateY(-3px) scale(1.01); }
+
     .cube-choice.active {
       border-color: var(--accent);
-      box-shadow: 0 10px 22px rgba(255,122,162,0.22);
+      box-shadow: 0 12px 24px rgba(255,122,162,0.22), inset 0 3px 0 rgba(255,255,255,0.95);
     }
 
     .cube-row {
@@ -136,6 +139,18 @@
     .cube-info span {
       font-size: 14px;
       color: #6d7894;
+    }
+
+    .toy-tag {
+      display: inline-block;
+      margin-top: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #fff7df;
+      color: #b67000;
+      border: 2px solid #ffe1a3;
     }
 
     .stage {
@@ -202,7 +217,6 @@
 
     .iso-box-base,
     .placed-cube,
-    .ghost-cube,
     .side-cube {
       position: absolute;
       transform-style: preserve-3d;
@@ -216,12 +230,8 @@
     .face {
       position: absolute;
       box-sizing: border-box;
-      border: 1.5px solid rgba(79,93,124,0.18);
+      border: 1.5px solid rgba(79,93,124,0.16);
     }
-
-    .top-face { transform-origin: top left; }
-    .front-face { transform-origin: top left; }
-    .side-face { transform-origin: top left; }
 
     .box-label {
       position: absolute;
@@ -244,26 +254,26 @@
     button {
       border: 0;
       cursor: pointer;
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 12px 15px;
       font-size: 15px;
       font-weight: 800;
       transition: transform 0.12s ease, opacity 0.12s ease;
+      box-shadow: 0 5px 0 rgba(0,0,0,0.04);
     }
+
     button:hover { transform: translateY(-1px); }
 
     .btn-box {
       background: #eef4ff;
       color: #43506f;
     }
+
     .btn-box.active {
       background: var(--accent2);
       color: white;
     }
-    .btn-main {
-      background: var(--accent);
-      color: white;
-    }
+
     .btn-alt {
       background: #eefaf3;
       color: #2a7a49;
@@ -290,9 +300,10 @@
     }
 
     .stat-card .big {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 900;
       color: #384463;
+      line-height: 1.2;
     }
 
     .message {
@@ -304,6 +315,7 @@
       line-height: 1.4;
       background: #f8fbff;
     }
+
     .message.good { color: var(--good); background: #eefbf3; }
     .message.bad { color: var(--bad); background: #fff1f1; }
     .message.info { color: #5a6889; }
@@ -373,36 +385,30 @@
       <section class="panel">
         <h2>Your Results</h2>
         <div class="action-row">
-          <button class="btn-main" id="addBtn">Add 1 Cube</button>
           <button class="btn-alt" id="undoBtn">Undo</button>
           <button class="btn-box" id="resetBtn">Reset Box</button>
-          <button class="btn-box" id="answerBtn">Show Max</button>
         </div>
 
         <div class="stats-grid">
           <div class="stat-card">
             <strong>Box dimensions</strong>
-            <div class="big" id="dimensionsText">6 × 6 × 12</div>
-          </div>
-          <div class="stat-card">
-            <strong>Total volume</strong>
-            <div class="big" id="volumeText">432 cm³</div>
+            <div class="big" id="dimensionsText">6 cm by 6 cm by 12 cm</div>
           </div>
           <div class="stat-card">
             <strong>Selected cube volume</strong>
             <div class="big" id="cubeVolumeText">1 cm³</div>
           </div>
           <div class="stat-card">
-            <strong>Cubes placed</strong>
-            <div class="big" id="countText">0</div>
+            <strong>Number of cubes by length</strong>
+            <div class="big" id="countLengthText">6</div>
           </div>
           <div class="stat-card">
-            <strong>Filled volume</strong>
-            <div class="big" id="filledText">0 cm³</div>
+            <strong>Number of cubes by breadth</strong>
+            <div class="big" id="countBreadthText">6</div>
           </div>
           <div class="stat-card">
-            <strong>Space left</strong>
-            <div class="big" id="leftText">432 cm³</div>
+            <strong>Number of cubes by height</strong>
+            <div class="big" id="countHeightText">12</div>
           </div>
         </div>
 
@@ -418,12 +424,11 @@
       { name: 'Box 3', l: 6, w: 8, h: 7 }
     ];
 
-    const cubeOptions = [1,2,3];
+    const cubeOptions = [1, 2, 3];
     const unit = 26;
     const states = boxes.map(box => ({
       cells: create3D(box.l, box.w, box.h),
-      placements: [],
-      filled: 0
+      placements: []
     }));
 
     let currentBox = 0;
@@ -437,26 +442,27 @@
     const currentCubePill = document.getElementById('currentCubePill');
     const dimensionLabel = document.getElementById('dimensionLabel');
     const dimensionsText = document.getElementById('dimensionsText');
-    const volumeText = document.getElementById('volumeText');
     const cubeVolumeText = document.getElementById('cubeVolumeText');
-    const countText = document.getElementById('countText');
-    const filledText = document.getElementById('filledText');
-    const leftText = document.getElementById('leftText');
+    const countLengthText = document.getElementById('countLengthText');
+    const countBreadthText = document.getElementById('countBreadthText');
+    const countHeightText = document.getElementById('countHeightText');
 
-    document.getElementById('addBtn').addEventListener('click', addOneCube);
     document.getElementById('undoBtn').addEventListener('click', undoLast);
     document.getElementById('resetBtn').addEventListener('click', resetBox);
-    document.getElementById('answerBtn').addEventListener('click', showMax);
     document.getElementById('world').addEventListener('click', addOneCube);
 
-    function create3D(l,w,h){
-      return Array.from({length:h},()=>Array.from({length:w},()=>Array.from({length:l},()=>0)));
+    function create3D(l, w, h) {
+      return Array.from({ length: h }, () =>
+        Array.from({ length: w }, () =>
+          Array.from({ length: l }, () => 0)
+        )
+      );
     }
 
-    function getBox(){ return boxes[currentBox]; }
-    function getState(){ return states[currentBox]; }
+    function getBox() { return boxes[currentBox]; }
+    function getState() { return states[currentBox]; }
 
-    function renderShelf(){
+    function renderShelf() {
       cubeShelf.innerHTML = '';
       cubeOptions.forEach(size => {
         const displaySize = 34 + size * 16;
@@ -464,12 +470,13 @@
         card.className = 'cube-choice' + (size === selectedCube ? ' active' : '');
         card.innerHTML = `
           <div class="cube-row">
-            <div class="side-cube" style="position:relative;width:${displaySize + 42}px;height:${displaySize + 42}px;transform:none;flex:0 0 ${displaySize + 42}px;">
-              ${cubeHTML(size, size === 1 ? 'cube1' : size === 2 ? 'cube2' : 'cube3', 12, 18, true)}
+            <div class="side-cube" style="position:relative;width:${displaySize + 46}px;height:${displaySize + 52}px;flex:0 0 ${displaySize + 46}px;">
+              ${cubeHTML(size, size === 1 ? 'cube1' : size === 2 ? 'cube2' : 'cube3', 10, 12, true)}
             </div>
             <div class="cube-info">
               <strong>${size} cm cube</strong>
-              <span>Volume: ${size*size*size} cm³</span>
+              <span>Volume: ${size * size * size} cm³</span>
+              <div class="toy-tag">Toy Block</div>
             </div>
           </div>
         `;
@@ -482,7 +489,7 @@
       });
     }
 
-    function renderBoxButtons(){
+    function renderBoxButtons() {
       boxButtons.innerHTML = '';
       boxes.forEach((box, i) => {
         const btn = document.createElement('button');
@@ -497,33 +504,27 @@
       });
     }
 
-    function cubeHTML(size, palette, x, y, standalone=false){
-  const base = standalone ? (34 + size * 16) : size * unit;
-  const front = palette === 'cube1' ? 'var(--cube1-front)' : palette === 'cube2' ? 'var(--cube2-front)' : 'var(--cube3-front)';
-  const side = palette === 'cube1' ? 'var(--cube1-side)' : palette === 'cube2' ? 'var(--cube2-side)' : 'var(--cube3-side)';
-  const top = palette === 'cube1' ? 'var(--cube1-top)' : palette === 'cube2' ? 'var(--cube2-top)' : 'var(--cube3-top)';
-  const shadow = standalone ? `
-    <div style="position:absolute;left:${base * 0.15}px;top:${base * 1.45}px;width:${base * 1.15}px;height:${base * 0.4}px;
-      background:rgba(0,0,0,0.12);filter:blur(4px);border-radius:50%;"></div>
-  ` : '';
+    function cubeHTML(size, palette, x, y, standalone = false) {
+      const base = standalone ? (34 + size * 16) : size * unit;
+      const front = palette === 'cube1' ? 'var(--cube1-front)' : palette === 'cube2' ? 'var(--cube2-front)' : 'var(--cube3-front)';
+      const side = palette === 'cube1' ? 'var(--cube1-side)' : palette === 'cube2' ? 'var(--cube2-side)' : 'var(--cube3-side)';
+      const top = palette === 'cube1' ? 'var(--cube1-top)' : palette === 'cube2' ? 'var(--cube2-top)' : 'var(--cube3-top)';
+      const outline = '2px solid rgba(255,255,255,0.95)';
+      const shadow = standalone
+        ? `<div style="position:absolute;left:${base * 0.12}px;top:${base * 1.38}px;width:${base * 1.15}px;height:${base * 0.36}px;background:rgba(0,0,0,0.12);filter:blur(5px);border-radius:50%;"></div>`
+        : '';
 
-  return `
-    <div style="position:absolute; left:${x}px; top:${y}px; width:${base}px; height:${base}px; transform-style:preserve-3d; ${standalone ? 'transform:rotateX(58deg) rotateZ(-45deg);' : ''}">
-      ${shadow}
-      <div style="position:absolute;width:${base}px;height:${base}px;background:${top};border:1px solid rgba(79,93,124,0.16);transform:translateZ(${base}px);"></div>
-      <div style="position:absolute;width:${base}px;height:${base}px;background:${front};border:1px solid rgba(79,93,124,0.16);transform:rotateX(-90deg) translateY(-${base}px);"></div>
-      <div style="position:absolute;width:${base}px;height:${base}px;background:${side};border:1px solid rgba(79,93,124,0.16);transform:rotateY(90deg) translateX(${base}px);"></div>
-    </div>
-  `;
-}" style="left:${x}px;top:${y}px;width:${px}px;height:${px}px;">
-          <div class="face top-face" style="width:${px}px;height:${px}px;background:${top};transform:translateZ(${px}px);"></div>
-          <div class="face front-face" style="width:${px}px;height:${px}px;background:${front};transform:rotateX(-90deg) translateY(-${px}px);"></div>
-          <div class="face side-face" style="width:${px}px;height:${px}px;background:${side};transform:rotateY(90deg) translateX(${px}px);"></div>
+      return `
+        <div class="${standalone ? 'side-cube' : 'placed-cube'}" style="left:${x}px;top:${y}px;width:${base}px;height:${base}px;${standalone ? 'transform:rotateX(58deg) rotateZ(-45deg);' : ''}">
+          ${shadow}
+          <div class="face" style="width:${base}px;height:${base}px;background:${top};border:${outline};transform:translateZ(${base}px);"></div>
+          <div class="face" style="width:${base}px;height:${base}px;background:${front};border:${outline};transform:rotateX(-90deg) translateY(-${base}px);"></div>
+          <div class="face" style="width:${base}px;height:${base}px;background:${side};border:${outline};transform:rotateY(90deg) translateX(${base}px);"></div>
         </div>
       `;
     }
 
-    function renderScene(){
+    function renderScene() {
       const box = getBox();
       const state = getState();
       scene.innerHTML = '';
@@ -540,30 +541,37 @@
       const floor = document.createElement('div');
       floor.className = 'iso-box-base';
       floor.innerHTML = `
-        <div class="face top-face" style="width:${floorW}px;height:${floorH}px;background:repeating-linear-gradient(90deg, rgba(90,108,143,0.1) 0 1px, transparent 1px ${unit}px), repeating-linear-gradient(180deg, rgba(90,108,143,0.1) 0 1px, transparent 1px ${unit}px), var(--box-top); transform:translateZ(0px);"></div>
-        <div class="face front-face" style="width:${floorW}px;height:${wallH}px;background:linear-gradient(180deg, #fff7ce, var(--box-front));transform:rotateX(-90deg) translateY(-${wallH}px);"></div>
-        <div class="face side-face" style="width:${floorH}px;height:${wallH}px;background:linear-gradient(180deg, #ffeaa5, var(--box-side));transform:rotateY(90deg) translateX(${floorW}px);"></div>
+        <div class="face" style="width:${floorW}px;height:${floorH}px;background:repeating-linear-gradient(90deg, rgba(90,108,143,0.1) 0 1px, transparent 1px ${unit}px), repeating-linear-gradient(180deg, rgba(90,108,143,0.1) 0 1px, transparent 1px ${unit}px), var(--box-top);transform:translateZ(0px);"></div>
+        <div class="face" style="width:${floorW}px;height:${wallH}px;background:linear-gradient(180deg, #fff7ce, var(--box-front));transform:rotateX(-90deg) translateY(-${wallH}px);"></div>
+        <div class="face" style="width:${floorH}px;height:${wallH}px;background:linear-gradient(180deg, #ffeaa5, var(--box-side));transform:rotateY(90deg) translateX(${floorW}px);"></div>
       `;
       wrap.appendChild(floor);
 
       state.placements.forEach(p => {
-        const cube = document.createElement('div');
-        cube.innerHTML = cubeHTML(p.size, p.size === 1 ? 'cube1' : p.size === 2 ? 'cube2' : 'cube3', p.x * unit, p.y * unit);
-        const node = cube.firstElementChild;
-        node.style.transform += ` translateZ(${p.z * unit}px)`;
+        const holder = document.createElement('div');
+        holder.innerHTML = cubeHTML(
+          p.size,
+          p.size === 1 ? 'cube1' : p.size === 2 ? 'cube2' : 'cube3',
+          p.x * unit,
+          p.y * unit,
+          false
+        );
+        const node = holder.firstElementChild;
+        node.style.transform = `translateZ(${p.z * unit}px)`;
         wrap.appendChild(node);
       });
 
       scene.appendChild(wrap);
     }
 
-    function fitsAt(x,y,z,size){
+    function fitsAt(x, y, z, size) {
       const box = getBox();
       const cells = getState().cells;
       if (x + size > box.l || y + size > box.w || z + size > box.h) return false;
-      for (let zz=z; zz<z+size; zz++) {
-        for (let yy=y; yy<y+size; yy++) {
-          for (let xx=x; xx<x+size; xx++) {
+
+      for (let zz = z; zz < z + size; zz++) {
+        for (let yy = y; yy < y + size; yy++) {
+          for (let xx = x; xx < x + size; xx++) {
             if (cells[zz][yy][xx] !== 0) return false;
           }
         }
@@ -571,19 +579,19 @@
       return true;
     }
 
-    function findNextSpot(size){
+    function findNextSpot(size) {
       const box = getBox();
-      for (let z=0; z<box.h; z++) {
-        for (let y=0; y<box.w; y++) {
-          for (let x=0; x<box.l; x++) {
-            if (fitsAt(x,y,z,size)) return {x,y,z};
+      for (let z = 0; z < box.h; z++) {
+        for (let y = 0; y < box.w; y++) {
+          for (let x = 0; x < box.l; x++) {
+            if (fitsAt(x, y, z, size)) return { x, y, z };
           }
         }
       }
       return null;
     }
 
-    function addOneCube(){
+    function addOneCube() {
       const state = getState();
       const spot = findNextSpot(selectedCube);
       if (!spot) {
@@ -591,74 +599,67 @@
         return;
       }
 
-      for (let zz=spot.z; zz<spot.z+selectedCube; zz++) {
-        for (let yy=spot.y; yy<spot.y+selectedCube; yy++) {
-          for (let xx=spot.x; xx<spot.x+selectedCube; xx++) {
+      for (let zz = spot.z; zz < spot.z + selectedCube; zz++) {
+        for (let yy = spot.y; yy < spot.y + selectedCube; yy++) {
+          for (let xx = spot.x; xx < spot.x + selectedCube; xx++) {
             state.cells[zz][yy][xx] = selectedCube;
           }
         }
       }
 
       state.placements.push({ ...spot, size: selectedCube });
-      state.filled += selectedCube ** 3;
       updateAll(false);
       setMessage(`Great! A ${selectedCube} cm cube was added.`, 'good');
     }
 
-    function undoLast(){
+    function undoLast() {
       const state = getState();
       const last = state.placements.pop();
       if (!last) {
         setMessage('There is nothing to undo yet.', 'info');
         return;
       }
-      for (let zz=last.z; zz<last.z+last.size; zz++) {
-        for (let yy=last.y; yy<last.y+last.size; yy++) {
-          for (let xx=last.x; xx<last.x+last.size; xx++) {
+
+      for (let zz = last.z; zz < last.z + last.size; zz++) {
+        for (let yy = last.y; yy < last.y + last.size; yy++) {
+          for (let xx = last.x; xx < last.x + last.size; xx++) {
             state.cells[zz][yy][xx] = 0;
           }
         }
       }
-      state.filled -= last.size ** 3;
+
       updateAll(false);
       setMessage('Last cube removed.', 'info');
     }
 
-    function resetBox(){
+    function resetBox() {
       const box = getBox();
-      states[currentBox] = { cells: create3D(box.l, box.w, box.h), placements: [], filled: 0 };
+      states[currentBox] = {
+        cells: create3D(box.l, box.w, box.h),
+        placements: []
+      };
       updateAll(false);
       setMessage('This box has been reset.', 'info');
     }
 
-    function showMax(){
+    function updateStats() {
       const box = getBox();
-      const s = selectedCube;
-      const max = Math.floor(box.l / s) * Math.floor(box.w / s) * Math.floor(box.h / s);
-      setMessage(`Using only ${s} cm cubes, the greatest number that can fit is ${max}.`, 'good');
-    }
-
-    function updateStats(){
-      const box = getBox();
-      const state = getState();
-      const total = box.l * box.w * box.h;
       currentBoxPill.textContent = box.name;
       currentCubePill.textContent = `Selected cube: ${selectedCube} cm`;
       dimensionLabel.textContent = `${box.l} × ${box.w} × ${box.h}`;
-      dimensionsText.textContent = `${box.l} × ${box.w} × ${box.h}`;
-      volumeText.textContent = `${total} cm³`;
+      dimensionsText.textContent = `${box.l} cm by ${box.w} cm by ${box.h} cm`;
       cubeVolumeText.textContent = `${selectedCube ** 3} cm³`;
-      countText.textContent = `${state.placements.length}`;
-      filledText.textContent = `${state.filled} cm³`;
-      leftText.textContent = `${total - state.filled} cm³`;
+      countLengthText.textContent = `${Math.floor(box.l / selectedCube)}`;
+      countBreadthText.textContent = `${Math.floor(box.w / selectedCube)}`;
+      countHeightText.textContent = `${Math.floor(box.h / selectedCube)}`;
     }
 
-    function setMessage(text, type='info'){
+    function setMessage(text, type = 'info') {
       message.textContent = text;
       message.className = 'message ' + type;
     }
 
-    function updateAll(full=true){
+    function updateAll() {
       renderShelf();
       renderBoxButtons();
       renderScene();
