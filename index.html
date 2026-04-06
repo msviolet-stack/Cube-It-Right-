@@ -465,13 +465,22 @@
     function renderShelf() {
       cubeShelf.innerHTML = '';
       cubeOptions.forEach(size => {
-        const displaySize = 34 + size * 16;
+        const displaySize = 30 + size * 14;
+        const svgW = displaySize * 2.2;
+        const svgH = displaySize * 2.2;
         const card = document.createElement('div');
         card.className = 'cube-choice' + (size === selectedCube ? ' active' : '');
         card.innerHTML = `
           <div class="cube-row">
-            <div class="side-cube" style="position:relative;width:${displaySize + 46}px;height:${displaySize + 52}px;flex:0 0 ${displaySize + 46}px;">
-              ${cubeHTML(size, size === 1 ? 'cube1' : size === 2 ? 'cube2' : 'cube3', 10, 12, true)}
+            <div style="width:${svgW}px;height:${svgH}px;flex:0 0 ${svgW}px;display:flex;align-items:center;justify-content:center;">
+              <svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" aria-hidden="true">
+                <defs>
+                  <filter id="softShadow">
+                    <feGaussianBlur stdDeviation="3"></feGaussianBlur>
+                  </filter>
+                </defs>
+                ${cubeHTML(size, size === 1 ? 'cube1' : size === 2 ? 'cube2' : 'cube3', 12, 12, true)}
+              </svg>
             </div>
             <div class="cube-info">
               <strong>${size} cm cube</strong>
@@ -505,22 +514,24 @@
     }
 
     function cubeHTML(size, palette, x, y, standalone = false) {
-      const base = standalone ? (34 + size * 16) : size * unit;
-      const front = palette === 'cube1' ? 'var(--cube1-front)' : palette === 'cube2' ? 'var(--cube2-front)' : 'var(--cube3-front)';
-      const side = palette === 'cube1' ? 'var(--cube1-side)' : palette === 'cube2' ? 'var(--cube2-side)' : 'var(--cube3-side)';
-      const top = palette === 'cube1' ? 'var(--cube1-top)' : palette === 'cube2' ? 'var(--cube2-top)' : 'var(--cube3-top)';
-      const outline = '2px solid rgba(255,255,255,0.95)';
+      const base = standalone ? (22 + size * 14) : size * unit;
+      const front = palette === 'cube1' ? '#1674d1' : palette === 'cube2' ? '#37b86b' : '#ec9837';
+      const side = palette === 'cube1' ? '#0f5fb2' : palette === 'cube2' ? '#239451' : '#d97f1d';
+      const top = palette === 'cube1' ? '#20a0ea' : palette === 'cube2' ? '#59d68a' : '#ffb861';
+      const sx = base * 0.55;
+      const sy = base * 0.26;
+      const h = base;
       const shadow = standalone
-        ? `<div style="position:absolute;left:${base * 0.12}px;top:${base * 1.38}px;width:${base * 1.15}px;height:${base * 0.36}px;background:rgba(0,0,0,0.12);filter:blur(5px);border-radius:50%;"></div>`
+        ? `<ellipse cx="${x + sx + base * 0.55}" cy="${y + sy + h + 18}" rx="${base * 0.7}" ry="${base * 0.18}" fill="rgba(0,0,0,0.12)" filter="url(#softShadow)" />`
         : '';
 
       return `
-        <div class="${standalone ? 'side-cube' : 'placed-cube'}" style="left:${x}px;top:${y}px;width:${base}px;height:${base}px;${standalone ? 'transform:rotateX(58deg) rotateZ(-45deg);' : ''}">
-          ${shadow}
-          <div class="face" style="width:${base}px;height:${base}px;background:${top};border:${outline};transform:translateZ(${base}px);"></div>
-          <div class="face" style="width:${base}px;height:${base}px;background:${front};border:${outline};transform:rotateX(-90deg) translateY(-${base}px);"></div>
-          <div class="face" style="width:${base}px;height:${base}px;background:${side};border:${outline};transform:rotateY(90deg) translateX(${base}px);"></div>
-        </div>
+        ${shadow}
+        <g class="${standalone ? 'shelf-cube' : 'placed-cube'}">
+          <polygon points="${x},${y + sy} ${x + sx},${y} ${x + sx + base},${y} ${x + base},${y + sy}" fill="${top}" stroke="#111" stroke-width="2" stroke-linejoin="round"></polygon>
+          <polygon points="${x + base},${y + sy} ${x + sx + base},${y} ${x + sx + base},${y + h} ${x + base},${y + h + sy}" fill="${side}" stroke="#111" stroke-width="2" stroke-linejoin="round"></polygon>
+          <polygon points="${x},${y + sy} ${x + base},${y + sy} ${x + base},${y + h + sy} ${x},${y + h + sy * 2}" fill="${front}" stroke="#111" stroke-width="2" stroke-linejoin="round"></polygon>
+        </g>
       `;
     }
 
@@ -530,38 +541,73 @@
       scene.innerHTML = '';
 
       const floorW = box.l * unit;
-      const floorH = box.w * unit;
+      const floorD = box.w * unit;
       const wallH = box.h * unit;
+      const dx = floorD * 0.55;
+      const dy = floorD * 0.26;
+      const originX = 130;
+      const originY = 360;
+      const svgW = 760;
+      const svgH = 520;
 
-      const wrap = document.createElement('div');
-      wrap.className = 'box-wrap';
-      wrap.style.width = floorW + 'px';
-      wrap.style.height = floorH + 'px';
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', svgW);
+      svg.setAttribute('height', svgH);
+      svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+      svg.style.overflow = 'visible';
 
-      const floor = document.createElement('div');
-      floor.className = 'iso-box-base';
-      floor.innerHTML = `
-        <div class="face" style="width:${floorW}px;height:${floorH}px;background:repeating-linear-gradient(90deg, rgba(90,108,143,0.1) 0 1px, transparent 1px ${unit}px), repeating-linear-gradient(180deg, rgba(90,108,143,0.1) 0 1px, transparent 1px ${unit}px), var(--box-top);transform:translateZ(0px);"></div>
-        <div class="face" style="width:${floorW}px;height:${wallH}px;background:linear-gradient(180deg, #fff7ce, var(--box-front));transform:rotateX(-90deg) translateY(-${wallH}px);"></div>
-        <div class="face" style="width:${floorH}px;height:${wallH}px;background:linear-gradient(180deg, #ffeaa5, var(--box-side));transform:rotateY(90deg) translateX(${floorW}px);"></div>
+      svg.innerHTML = `
+        <defs>
+          <filter id="sceneShadow">
+            <feGaussianBlur stdDeviation="4"></feGaussianBlur>
+          </filter>
+        </defs>
+        <ellipse cx="${originX + floorW / 2 + dx / 2}" cy="${originY + wallH + dy + 34}" rx="${Math.max(90, floorW * 0.75)}" ry="36" fill="rgba(0,0,0,0.08)" filter="url(#sceneShadow)"></ellipse>
+        <polygon points="${originX},${originY} ${originX + dx},${originY - dy} ${originX + dx + floorW},${originY - dy} ${originX + floorW},${originY}" fill="#f7efc9" stroke="#d7cfa8" stroke-width="1.2"></polygon>
+        <polygon points="${originX + floorW},${originY} ${originX + dx + floorW},${originY - dy} ${originX + dx + floorW},${originY - dy - wallH} ${originX + floorW},${originY - wallH}" fill="#f0d98a" stroke="#111" stroke-width="2.2" stroke-linejoin="round"></polygon>
+        <polygon points="${originX},${originY} ${originX + floorW},${originY} ${originX + floorW},${originY - wallH} ${originX},${originY - wallH}" fill="#f5e29c" stroke="#111" stroke-width="2.2" stroke-linejoin="round"></polygon>
+        <polyline points="${originX},${originY} ${originX + dx},${originY - dy} ${originX + dx + floorW},${originY - dy} ${originX + floorW},${originY} ${originX},${originY}" fill="none" stroke="#111" stroke-width="2.2" stroke-linejoin="round"></polyline>
       `;
-      wrap.appendChild(floor);
 
-      state.placements.forEach(p => {
-        const holder = document.createElement('div');
-        holder.innerHTML = cubeHTML(
-          p.size,
-          p.size === 1 ? 'cube1' : p.size === 2 ? 'cube2' : 'cube3',
-          p.x * unit,
-          p.y * unit,
-          false
-        );
-        const node = holder.firstElementChild;
-        node.style.transform = `translateZ(${p.z * unit}px)`;
-        wrap.appendChild(node);
-      });
+      for (let i = 1; i < box.l; i++) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', originX + i * unit);
+        line.setAttribute('y1', originY);
+        line.setAttribute('x2', originX + dx + i * unit);
+        line.setAttribute('y2', originY - dy);
+        line.setAttribute('stroke', '#d9d1ab');
+        line.setAttribute('stroke-width', '1');
+        svg.appendChild(line);
+      }
+      for (let j = 1; j < box.w; j++) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', originX + (dx / box.w) * j);
+        line.setAttribute('y1', originY - (dy / box.w) * j);
+        line.setAttribute('x2', originX + floorW + (dx / box.w) * j);
+        line.setAttribute('y2', originY - (dy / box.w) * j);
+        line.setAttribute('stroke', '#d9d1ab');
+        line.setAttribute('stroke-width', '1');
+        svg.appendChild(line);
+      }
 
-      scene.appendChild(wrap);
+      state.placements
+        .slice()
+        .sort((a, b) => (a.z - b.z) || (a.y - b.y) || (a.x - b.x))
+        .forEach(p => {
+          const isoX = originX + p.x * unit + p.y * (unit * 0.55);
+          const isoY = originY - p.z * unit - p.y * (unit * 0.26) - p.size * unit;
+          const holder = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          holder.innerHTML = cubeHTML(
+            p.size,
+            p.size === 1 ? 'cube1' : p.size === 2 ? 'cube2' : 'cube3',
+            isoX,
+            isoY,
+            false
+          );
+          while (holder.firstChild) svg.appendChild(holder.firstChild);
+        });
+
+      scene.appendChild(svg);
     }
 
     function fitsAt(x, y, z, size) {
