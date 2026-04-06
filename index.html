@@ -208,6 +208,11 @@
       transform-style: preserve-3d;
     }
 
+    .side-cube {
+      overflow: visible;
+      perspective: 900px;
+    }
+
     .face {
       position: absolute;
       box-sizing: border-box;
@@ -454,12 +459,13 @@
     function renderShelf(){
       cubeShelf.innerHTML = '';
       cubeOptions.forEach(size => {
+        const displaySize = 34 + size * 16;
         const card = document.createElement('div');
         card.className = 'cube-choice' + (size === selectedCube ? ' active' : '');
         card.innerHTML = `
           <div class="cube-row">
-            <div class="side-cube" style="position:relative;width:${55 + size*18}px;height:${55 + size*18}px;transform:none;">
-              ${cubeHTML(size, size === 1 ? 'cube1' : size === 2 ? 'cube2' : 'cube3', 0, 0, true)}
+            <div class="side-cube" style="position:relative;width:${displaySize + 42}px;height:${displaySize + 42}px;transform:none;flex:0 0 ${displaySize + 42}px;">
+              ${cubeHTML(size, size === 1 ? 'cube1' : size === 2 ? 'cube2' : 'cube3', 12, 18, true)}
             </div>
             <div class="cube-info">
               <strong>${size} cm cube</strong>
@@ -492,16 +498,21 @@
     }
 
     function cubeHTML(size, palette, x, y, standalone=false){
-  const px = size * unit;
+  const base = standalone ? (34 + size * 16) : size * unit;
   const front = palette === 'cube1' ? 'var(--cube1-front)' : palette === 'cube2' ? 'var(--cube2-front)' : 'var(--cube3-front)';
   const side = palette === 'cube1' ? 'var(--cube1-side)' : palette === 'cube2' ? 'var(--cube2-side)' : 'var(--cube3-side)';
   const top = palette === 'cube1' ? 'var(--cube1-top)' : palette === 'cube2' ? 'var(--cube2-top)' : 'var(--cube3-top)';
+  const shadow = standalone ? `
+    <div style="position:absolute;left:${base * 0.15}px;top:${base * 1.45}px;width:${base * 1.15}px;height:${base * 0.4}px;
+      background:rgba(0,0,0,0.12);filter:blur(4px);border-radius:50%;"></div>
+  ` : '';
 
   return `
-    <div style="position:absolute; left:${x}px; top:${y}px; width:${px}px; height:${px}px; transform-style:preserve-3d; transform:${standalone ? 'rotateX(60deg) rotateZ(-45deg)' : ''};">
-      <div style="position:absolute;width:${px}px;height:${px}px;background:${top};transform:translateZ(${px}px);"></div>
-      <div style="position:absolute;width:${px}px;height:${px}px;background:${front};transform:rotateX(-90deg) translateY(-${px}px);"></div>
-      <div style="position:absolute;width:${px}px;height:${px}px;background:${side};transform:rotateY(90deg) translateX(${px}px);"></div>
+    <div style="position:absolute; left:${x}px; top:${y}px; width:${base}px; height:${base}px; transform-style:preserve-3d; ${standalone ? 'transform:rotateX(58deg) rotateZ(-45deg);' : ''}">
+      ${shadow}
+      <div style="position:absolute;width:${base}px;height:${base}px;background:${top};border:1px solid rgba(79,93,124,0.16);transform:translateZ(${base}px);"></div>
+      <div style="position:absolute;width:${base}px;height:${base}px;background:${front};border:1px solid rgba(79,93,124,0.16);transform:rotateX(-90deg) translateY(-${base}px);"></div>
+      <div style="position:absolute;width:${base}px;height:${base}px;background:${side};border:1px solid rgba(79,93,124,0.16);transform:rotateY(90deg) translateX(${base}px);"></div>
     </div>
   `;
 }" style="left:${x}px;top:${y}px;width:${px}px;height:${px}px;">
