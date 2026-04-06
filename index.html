@@ -684,7 +684,7 @@
 
       const placement = findPlacement(box, currentCubes, selectedCube);
       if (!placement) {
-        alert("Can't fit this cube right now.");
+        alert("This cube does not fit in the remaining space.");
         return;
       }
 
@@ -794,10 +794,18 @@
     function makePlacedCubes(box, placedCubes) {
       placedCubes.forEach(c => {
         const geo = new THREE.BoxGeometry(c.size, c.size, c.size);
-        const mat = new THREE.MeshPhongMaterial({
-          color: 0x8b5cf6
-        });
-        const mesh = new THREE.Mesh(geo, mat);
+        const colors = getCubeColors(c.size);
+
+        const materials = [
+          new THREE.MeshPhongMaterial({ color: colors.right }),
+          new THREE.MeshPhongMaterial({ color: colors.left }),
+          new THREE.MeshPhongMaterial({ color: colors.top }),
+          new THREE.MeshPhongMaterial({ color: colors.left }),
+          new THREE.MeshPhongMaterial({ color: colors.right }),
+          new THREE.MeshPhongMaterial({ color: colors.left })
+        ];
+
+        const mesh = new THREE.Mesh(geo, materials);
 
         const x = -box.width / 2 + c.x + c.size / 2;
         const y = c.z + c.size / 2;
@@ -808,7 +816,11 @@
 
         const edge = new THREE.LineSegments(
           new THREE.EdgesGeometry(geo),
-          new THREE.LineBasicMaterial({ color: 0x5b21b6 })
+          new THREE.LineBasicMaterial({
+            color: 0x000000,
+            transparent: true,
+            opacity: 0.12
+          })
         );
         edge.position.copy(mesh.position);
         group.add(edge);
