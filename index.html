@@ -492,12 +492,19 @@
     }
 
     function cubeHTML(size, palette, x, y, standalone=false){
-      const px = size * unit;
-      const front = palette === 'cube1' ? 'var(--cube1-front)' : palette === 'cube2' ? 'var(--cube2-front)' : 'var(--cube3-front)';
-      const side = palette === 'cube1' ? 'var(--cube1-side)' : palette === 'cube2' ? 'var(--cube2-side)' : 'var(--cube3-side)';
-      const top = palette === 'cube1' ? 'var(--cube1-top)' : palette === 'cube2' ? 'var(--cube2-top)' : 'var(--cube3-top)';
-      return `
-        <div class="${standalone ? '' : 'placed-cube'}" style="left:${x}px;top:${y}px;width:${px}px;height:${px}px;">
+  const px = size * unit;
+  const front = palette === 'cube1' ? 'var(--cube1-front)' : palette === 'cube2' ? 'var(--cube2-front)' : 'var(--cube3-front)';
+  const side = palette === 'cube1' ? 'var(--cube1-side)' : palette === 'cube2' ? 'var(--cube2-side)' : 'var(--cube3-side)';
+  const top = palette === 'cube1' ? 'var(--cube1-top)' : palette === 'cube2' ? 'var(--cube2-top)' : 'var(--cube3-top)';
+
+  return `
+    <div style="position:absolute; left:${x}px; top:${y}px; width:${px}px; height:${px}px; transform-style:preserve-3d; transform:${standalone ? 'rotateX(60deg) rotateZ(-45deg)' : ''};">
+      <div style="position:absolute;width:${px}px;height:${px}px;background:${top};transform:translateZ(${px}px);"></div>
+      <div style="position:absolute;width:${px}px;height:${px}px;background:${front};transform:rotateX(-90deg) translateY(-${px}px);"></div>
+      <div style="position:absolute;width:${px}px;height:${px}px;background:${side};transform:rotateY(90deg) translateX(${px}px);"></div>
+    </div>
+  `;
+}" style="left:${x}px;top:${y}px;width:${px}px;height:${px}px;">
           <div class="face top-face" style="width:${px}px;height:${px}px;background:${top};transform:translateZ(${px}px);"></div>
           <div class="face front-face" style="width:${px}px;height:${px}px;background:${front};transform:rotateX(-90deg) translateY(-${px}px);"></div>
           <div class="face side-face" style="width:${px}px;height:${px}px;background:${side};transform:rotateY(90deg) translateX(${px}px);"></div>
