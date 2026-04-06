@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Build the Box with Cubes</title>
+  <title>Cube It Right!</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -18,24 +18,19 @@
     .header {
       background: white;
       border-bottom: 1px solid #e5e7eb;
-      padding: 18px 24px;
+      padding: 14px 24px;
     }
 
     .header h1 {
       margin: 0;
       font-size: 28px;
       color: #ec4899;
-    }
-
-    .header p {
-      margin: 6px 0 0;
-      color: #6b7280;
-      font-size: 14px;
+      font-weight: 700;
     }
 
     .layout {
       display: flex;
-      min-height: calc(100vh - 86px);
+      min-height: calc(100vh - 61px);
     }
 
     .panel {
@@ -44,7 +39,6 @@
       overflow-y: auto;
     }
 
-    /* LEFT PANEL UPDATED */
     .left-panel {
       width: 286px;
       border-right: 1px solid #e5e7eb;
@@ -137,19 +131,6 @@
       margin: 0;
     }
 
-    .cube-badge {
-      margin-top: 10px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 5px 12px;
-      border-radius: 999px;
-      background: #e8cf63;
-      color: #6d4c00;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
     .help-box {
       margin-top: 10px;
       background: #f7efe6;
@@ -179,18 +160,19 @@
     }
 
     .right-panel {
-      width: 260px;
+      width: 290px;
       border-left: 1px solid #e5e7eb;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      background: #f7f7f8;
     }
 
     .main {
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 16px;
+      padding: 0;
       min-width: 0;
       background: #f1f5f9;
     }
@@ -198,41 +180,39 @@
     .section-title {
       font-size: 14px;
       font-weight: 700;
-      margin: 0 0 6px 0;
-    }
-
-    .section-subtext {
-      font-size: 12px;
-      color: #6b7280;
-      margin: 0;
+      margin: 0 0 8px 0;
+      color: #14213d;
     }
 
     .top-bar {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
       align-items: center;
-      margin-bottom: 12px;
+      gap: 10px;
+      padding: 18px 0 18px 0;
+      background: #eef2f7;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .tab-label {
       font-size: 12px;
-      color: #9ca3af;
-      margin-right: 4px;
+      color: #6b7280;
+      margin-left: 0;
+      padding-left: 0;
     }
 
     #boxTabs {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      align-items: center;
     }
 
     .tab-btn {
       border: none;
-      background: #f3f4f6;
-      color: #4b5563;
-      padding: 10px 14px;
-      border-radius: 10px;
+      background: transparent;
+      color: #334155;
+      padding: 10px 16px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
@@ -246,12 +226,13 @@
 
     .selected-pill {
       margin-left: auto;
-      font-size: 12px;
-      background: #f3f4f6;
-      color: #4b5563;
-      padding: 8px 12px;
-      border-radius: 10px;
+      margin-right: 28px;
+      font-size: 14px;
+      color: #334155;
       font-weight: 700;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
     }
 
     .canvas-wrap {
@@ -259,7 +240,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding-top: 4px;
+      padding: 16px;
       min-height: 500px;
     }
 
@@ -290,7 +271,7 @@
       display: flex;
       justify-content: center;
       gap: 12px;
-      margin-top: 14px;
+      margin: 0 0 16px;
       flex-wrap: wrap;
     }
 
@@ -325,22 +306,24 @@
     }
 
     .stat-card {
-      background: #f9fafb;
-      border-radius: 14px;
-      padding: 12px;
+      background: #f1f1f2;
+      border-radius: 16px;
+      padding: 14px 14px 16px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
     }
 
     .stat-label {
       font-size: 12px;
-      color: #9ca3af;
-      margin-bottom: 4px;
+      color: #9aa3b2;
+      margin-bottom: 8px;
+      line-height: 1.3;
     }
 
     .stat-value {
       font-size: 17px;
       font-weight: 700;
-      color: #1f2937;
-      line-height: 1.3;
+      color: #14213d;
+      line-height: 1.35;
     }
 
     .success-box {
@@ -356,7 +339,7 @@
     .summary {
       margin-top: auto;
       padding-top: 14px;
-      border-top: 1px solid #f1f5f9;
+      border-top: 1px solid #eceff3;
       font-size: 13px;
       color: #6b7280;
     }
@@ -399,6 +382,7 @@
 
       .selected-pill {
         margin-left: 0;
+        margin-right: 0;
       }
 
       .cube-options {
@@ -411,6 +395,10 @@
 
       .left-panel-title {
         font-size: 24px;
+      }
+
+      .top-bar {
+        padding: 14px 16px;
       }
     }
   </style>
@@ -426,8 +414,7 @@
 </head>
 <body>
   <div class="header">
-    <h1>Build the Box with Cubes!</h1>
-    <p>Choose a cube, choose a box, and see how many cubes fit inside.</p>
+    <h1>Cube It Right!</h1>
   </div>
 
   <div class="layout">
@@ -482,6 +469,11 @@
       </div>
 
       <div class="stat-card">
+        <div class="stat-label">Selected box volume</div>
+        <div class="stat-value" id="selectedBoxVolume">-</div>
+      </div>
+
+      <div class="stat-card">
         <div class="stat-label">Selected cube volume</div>
         <div class="stat-value" id="cubeVolume">-</div>
       </div>
@@ -525,9 +517,9 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
     const BOXES = [
-      { width: 6, depth: 6, height: 12, label: 'Box 1 (6 × 6 × 12)' },
-      { width: 9, depth: 15, height: 9, label: 'Box 2 (9 × 15 × 9)' },
-      { width: 6, depth: 8, height: 7, label: 'Box 3 (6 × 8 × 7)' }
+      { width: 6, depth: 6, height: 12, label: 'Box A' },
+      { width: 9, depth: 15, height: 9, label: 'Box B' },
+      { width: 6, depth: 8, height: 7, label: 'Box C' }
     ];
 
     const CUBE_SIZES = [1, 2, 3];
@@ -541,6 +533,7 @@
     const boxTabsEl = document.getElementById('boxTabs');
     const selectedCubeText = document.getElementById('selectedCubeText');
     const boxDimensions = document.getElementById('boxDimensions');
+    const selectedBoxVolume = document.getElementById('selectedBoxVolume');
     const cubeVolume = document.getElementById('cubeVolume');
     const lengthCount = document.getElementById('lengthCount');
     const breadthCount = document.getElementById('breadthCount');
@@ -647,7 +640,6 @@
           </div>
           <p class="cube-name">${size} cm cube</p>
           <p class="cube-volume">Volume: ${size ** 3} cm³</p>
-          ${selectedCube === size ? `<span class="cube-badge">Toy Block</span>` : ``}
         `;
 
         div.onclick = () => {
@@ -682,6 +674,7 @@
 
       selectedCubeText.textContent = `Selected cube: ${selectedCube} cm`;
       boxDimensions.textContent = `${box.width} cm by ${box.depth} cm by ${box.height} cm`;
+      selectedBoxVolume.textContent = `${totalVol} cm³`;
       cubeVolume.textContent = `${selectedCube ** 3} cm³`;
       lengthCount.textContent = cubesAlongAxis(box.width);
       breadthCount.textContent = cubesAlongAxis(box.depth);
