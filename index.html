@@ -188,16 +188,9 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 18px 0 18px 0;
+      padding: 18px 20px;
       background: #eef2f7;
       border-bottom: 1px solid #e5e7eb;
-    }
-
-    .tab-label {
-      font-size: 12px;
-      color: #6b7280;
-      margin-left: 0;
-      padding-left: 0;
     }
 
     #boxTabs {
@@ -224,30 +217,18 @@
       box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
     }
 
-    .selected-pill {
-      margin-left: auto;
-      margin-right: 28px;
-      font-size: 14px;
-      color: #334155;
-      font-weight: 700;
-      background: transparent;
-      padding: 0;
-      border-radius: 0;
-    }
-
     .canvas-wrap {
       flex: 1;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 16px;
-      min-height: 500px;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 18px 20px;
+      min-height: 620px;
     }
 
     .canvas-card {
       width: 100%;
-      max-width: 760px;
-      height: 520px;
+      height: 620px;
       background: linear-gradient(180deg, #ffffff, #f8fafc);
       border: 1px solid #e5e7eb;
       border-radius: 20px;
@@ -380,11 +361,6 @@
         border-bottom: 1px solid #e5e7eb;
       }
 
-      .selected-pill {
-        margin-left: 0;
-        margin-right: 0;
-      }
-
       .cube-options {
         flex-direction: row;
       }
@@ -398,6 +374,11 @@
       }
 
       .top-bar {
+        padding: 14px 16px;
+      }
+
+      .canvas-wrap {
+        min-height: 440px;
         padding: 14px 16px;
       }
     }
@@ -431,19 +412,16 @@
       <div class="help-box">
         <span class="help-box-title">How to play:</span>
         <ol>
-          <li>Pick a cube from the left.</li>
+          <li>Pick a cube from Cube Shelf.</li>
           <li>Pick a box.</li>
-          <li>Click <strong>Add Cube</strong> to place it.</li>
-          <li>Click a cube to remove it.</li>
+          <li>Click <strong>Add Cube</strong> to place cube in the box.</li>
         </ol>
       </div>
     </aside>
 
     <main class="main">
       <div class="top-bar">
-        <span class="tab-label">Box</span>
         <div id="boxTabs"></div>
-        <div class="selected-pill" id="selectedCubeText">Selected cube: 2 cm</div>
       </div>
 
       <div class="canvas-wrap">
@@ -531,7 +509,6 @@
 
     const cubeOptionsEl = document.getElementById('cubeOptions');
     const boxTabsEl = document.getElementById('boxTabs');
-    const selectedCubeText = document.getElementById('selectedCubeText');
     const boxDimensions = document.getElementById('boxDimensions');
     const selectedBoxVolume = document.getElementById('selectedBoxVolume');
     const cubeVolume = document.getElementById('cubeVolume');
@@ -672,7 +649,6 @@
       const totalVol = getTotalVolume();
       const usedVol = getUsedVolume();
 
-      selectedCubeText.textContent = `Selected cube: ${selectedCube} cm`;
       boxDimensions.textContent = `${box.width} cm by ${box.depth} cm by ${box.height} cm`;
       selectedBoxVolume.textContent = `${totalVol} cm³`;
       cubeVolume.textContent = `${selectedCube ** 3} cm³`;
@@ -692,12 +668,6 @@
       } else {
         lastAddedBox.innerHTML = '';
       }
-    }
-
-    function renderUI() {
-      renderCubeOptions();
-      renderBoxTabs();
-      renderStats();
     }
 
     addCubeBtn.onclick = () => {
@@ -739,6 +709,12 @@
       rebuildScene();
       renderUI();
     };
+
+    function renderUI() {
+      renderCubeOptions();
+      renderBoxTabs();
+      renderStats();
+    }
 
     const canvas = document.getElementById('scene');
     const renderer = new THREE.WebGLRenderer({
