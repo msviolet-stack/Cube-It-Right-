@@ -39,16 +39,15 @@
       overflow-y: auto;
     }
 
-   .left-panel {
-  position: relative;
-}
+    .left-panel {
+      position: relative;
       width: 300px;
       border-right: 1px solid #e5e7eb;
       display: flex;
       flex-direction: column;
       gap: 14px;
       background: #f7f7f8;
-      padding: 18px 18px 14px;
+      padding: 18px 18px 40px;
     }
 
     .left-panel-head {
@@ -159,6 +158,17 @@
 
     .help-box li {
       margin: 0;
+    }
+
+    .credit-tag {
+      position: absolute;
+      left: 10px;
+      bottom: 6px;
+      font-size: 9px;
+      color: #c0c6d1;
+      opacity: 0.78;
+      line-height: 1.2;
+      pointer-events: none;
     }
 
     .right-panel {
@@ -419,9 +429,10 @@
           <li>Click <strong>Add Cube</strong> to place cube in the box.</li>
         </ol>
       </div>
-  <div class="credit-tag">
-  Developed by Ms Violet Soh | Supported by OpenAI Technology
-</div>
+
+      <div class="credit-tag">
+        Developed by Ms Violet Soh | Supported by OpenAI Technology
+      </div>
     </aside>
 
     <main class="main">
@@ -433,7 +444,6 @@
         <div class="canvas-card">
           <canvas id="scene"></canvas>
           <div class="hint-overlay">Drag to rotate the box</div>
-        
         </div>
       </div>
 
@@ -905,8 +915,9 @@
     rebuildScene();
     animate();
   </script>
+
   <script>
-document.addEventListener('contextmenu', e => e.preventDefault());
-</script>
+    document.addEventListener('contextmenu', e => e.preventDefault());
+  </script>
 </body>
 </html>
