@@ -40,7 +40,7 @@
     }
 
     .left-panel {
-      width: 286px;
+      width: 300px;
       border-right: 1px solid #e5e7eb;
       display: flex;
       flex-direction: column;
@@ -160,7 +160,7 @@
     }
 
     .right-panel {
-      width: 290px;
+      width: 300px;
       border-left: 1px solid #e5e7eb;
       display: flex;
       flex-direction: column;
@@ -472,9 +472,9 @@
       </div>
 
       <div class="stat-card">
-  <div class="stat-label">Number of cubes added</div>
-  <div class="stat-value" id="cubesAddedCount">-</div>
-</div>
+        <div class="stat-label">Number of cubes added</div>
+        <div class="stat-value" id="cubesAddedCount">0</div>
+      </div>
 
       <div id="lastAddedBox"></div>
 
@@ -500,20 +500,24 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
     const BOXES = [
-  { width: 7, depth: 7, height: 7, label: 'Box A' },
-  { width: 15, depth: 8, height: 7, label: 'Box B' },
-  { width: 21, depth: 11, height: 9, label: 'Box C' },
-  { width: 14, depth: 10, height: 8, label: 'Box D' },
-  { width: 15, depth: 9, height: 7, label: 'Box E' },
-  { width: 31, depth: 10, height: 8, label: 'Box F' }
-];
+      { width: 7, depth: 7, height: 7, label: 'Box A' },
+      { width: 15, depth: 8, height: 7, label: 'Box B' },
+      { width: 21, depth: 11, height: 9, label: 'Box C' },
+      { width: 14, depth: 10, height: 8, label: 'Box D' },
+      { width: 15, depth: 9, height: 7, label: 'Box E' },
+      { width: 31, depth: 10, height: 8, label: 'Box F' }
+    ];
 
     const CUBE_SIZES = [1, 2, 3];
 
     let activeBox = 0;
     let selectedCube = 2;
-    let cubesMap = { 0: [], 1: [], 2: [] };
+    let cubesMap = {};
     let lastAdded = null;
+
+    BOXES.forEach((_, index) => {
+      cubesMap[index] = [];
+    });
 
     const cubeOptionsEl = document.getElementById('cubeOptions');
     const boxTabsEl = document.getElementById('boxTabs');
@@ -523,6 +527,7 @@
     const lengthCount = document.getElementById('lengthCount');
     const breadthCount = document.getElementById('breadthCount');
     const heightCount = document.getElementById('heightCount');
+    const cubesAddedCount = document.getElementById('cubesAddedCount');
     const totalVolEl = document.getElementById('totalVol');
     const usedVolEl = document.getElementById('usedVol');
     const remainingVolEl = document.getElementById('remainingVol');
@@ -638,16 +643,19 @@
 
     function renderBoxTabs() {
       boxTabsEl.innerHTML = '';
+
       BOXES.forEach((box, i) => {
         const btn = document.createElement('button');
         btn.className = 'tab-btn' + (activeBox === i ? ' active' : '');
         btn.textContent = box.label;
+
         btn.onclick = () => {
           activeBox = i;
           lastAdded = null;
           renderUI();
           rebuildScene();
         };
+
         boxTabsEl.appendChild(btn);
       });
     }
@@ -663,6 +671,7 @@
       lengthCount.textContent = cubesAlongAxis(box.width);
       breadthCount.textContent = cubesAlongAxis(box.depth);
       heightCount.textContent = cubesAlongAxis(box.height);
+      cubesAddedCount.textContent = getCurrentCubes().length;
       totalVolEl.textContent = `${totalVol} cm³`;
       usedVolEl.textContent = `${usedVol} cm³`;
       remainingVolEl.textContent = `${totalVol - usedVol} cm³`;
@@ -678,6 +687,12 @@
       }
     }
 
+    function renderUI() {
+      renderCubeOptions();
+      renderBoxTabs();
+      renderStats();
+    }
+
     addCubeBtn.onclick = () => {
       const box = getCurrentBox();
       const currentCubes = getCurrentCubes();
@@ -691,8 +706,9 @@
       }
 
       const placement = findPlacement(box, currentCubes, selectedCube);
+
       if (!placement) {
-        alert("This cube is too big for the available space.");
+        alert('This cube is too big for the available space.');
         return;
       }
 
@@ -718,12 +734,6 @@
       renderUI();
     };
 
-    function renderUI() {
-      renderCubeOptions();
-      renderBoxTabs();
-      renderStats();
-    }
-
     const canvas = document.getElementById('scene');
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -743,7 +753,7 @@
     controls.enableDamping = true;
     controls.enablePan = false;
     controls.minDistance = 10;
-    controls.maxDistance = 50;
+    controls.maxDistance = 80;
     controls.target.set(0, 4, 0);
 
     const ambient = new THREE.AmbientLight(0xffffff, 1.1);
@@ -764,7 +774,9 @@
       while (group.children.length) {
         const child = group.children[0];
         group.remove(child);
+
         if (child.geometry) child.geometry.dispose();
+
         if (child.material) {
           if (Array.isArray(child.material)) {
             child.material.forEach(m => m.dispose());
@@ -836,8 +848,8 @@
     }
 
     function addBaseGrid(box) {
-      const size = Math.max(box.width, box.depth) + 4;
-      const divisions = Math.max(box.width, box.depth) + 4;
+      const size = Math.max(box.width, box.depth) + 6;
+      const divisions = Math.max(box.width, box.depth) + 6;
       const grid = new THREE.GridHelper(size, divisions, 0xe2e8f0, 0xe2e8f0);
       grid.position.y = 0;
       group.add(grid);
@@ -856,7 +868,9 @@
       controls.target.set(0, box.height / 2, 0);
 
       const maxDim = Math.max(box.width, box.depth, box.height);
-      camera.position.set(maxDim * 1.8, box.height * 1.1 + 4, maxDim * 1.9);
+      const scale = Math.min(maxDim, 20);
+
+      camera.position.set(scale * 1.8, box.height * 1.1 + 4, scale * 1.9);
       camera.lookAt(0, box.height / 2, 0);
 
       controls.update();
