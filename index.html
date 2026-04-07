@@ -428,6 +428,9 @@
         <div class="canvas-card">
           <canvas id="scene"></canvas>
           <div class="hint-overlay">Drag to rotate the box</div>
+          <div class="credit-tag">
+  Developed by Ms Violet Soh | Supported by OpenAI Technology
+</div>
         </div>
       </div>
 
@@ -899,5 +902,8 @@
     rebuildScene();
     animate();
   </script>
+  <script>
+document.addEventListener('contextmenu', e => e.preventDefault());
+</script>
 </body>
 </html>
