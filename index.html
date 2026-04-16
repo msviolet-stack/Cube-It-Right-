@@ -3,906 +3,702 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cube It Right!</title>
-
+  <title>Volume Explorer</title>
   <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8fafc;
-      color: #1f2937;
+    :root{
+      --bg:#eef3f8;
+      --card:#ffffff;
+      --border:#cfd8e3;
+      --text:#1f2937;
+      --muted:#64748b;
+      --primary:#2f66e3;
+      --primary-dark:#1f4fc4;
+      --shadow:0 12px 30px rgba(15,23,42,0.08);
+      --radius:22px;
     }
-
-    .header {
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 14px 24px;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#eef3f8 0%,#edf4f2 100%);
+      color:var(--text);
     }
-
-    .header h1 {
-      margin: 0;
-      font-size: 28px;
-      color: #ec4899;
-      font-weight: 700;
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(255,255,255,0.9);
+      backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--border);
     }
-
-    .layout {
-      display: flex;
-      min-height: calc(100vh - 61px);
+    .header-inner{
+      max-width:1240px;
+      margin:0 auto;
+      padding:14px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
     }
-
-    .panel {
-      background: white;
-      padding: 16px;
-      overflow-y: auto;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
     }
-
-    .left-panel {
-      position: relative;
-      width: 300px;
-      border-right: 1px solid #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      background: #f7f7f8;
-      padding: 18px 18px 40px;
+    .brand-icon{
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      background:linear-gradient(135deg,#4d85ff,#2758d9);
+      display:grid;
+      place-items:center;
+      color:white;
+      font-size:22px;
+      box-shadow:var(--shadow);
     }
-
-    .left-panel-head {
-      margin-bottom: 2px;
+    .brand h1{
+      margin:0;
+      font-size:24px;
+      line-height:1.1;
     }
-
-    .left-panel-title {
-      margin: 0 0 6px;
-      font-size: 31px;
-      line-height: 1.05;
-      font-weight: 700;
-      color: #1d3557;
-      letter-spacing: -0.2px;
+    .brand p{
+      margin:2px 0 0;
+      font-size:13px;
+      color:var(--muted);
     }
-
-    .left-panel-subtext {
-      margin: 0;
-      font-size: 13px;
-      line-height: 1.45;
-      color: #8a8fa3;
-      max-width: 220px;
+    .question-nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
     }
-
-    .cube-options {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    .nav-btn{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      font-weight:700;
+      color:var(--text);
     }
-
-    .cube-option {
-      border: 2px solid #d9dbe1;
-      border-radius: 16px;
-      padding: 14px 12px 14px;
-      cursor: pointer;
-      transition: 0.18s ease;
-      background: #f1f1f2;
-      min-height: 138px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.55),
-        0 1px 2px rgba(16,24,40,0.06);
+    .nav-btn.active{
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:white;
+      border-color:transparent;
     }
-
-    .cube-option:hover {
-      transform: translateY(-1px);
+    main{
+      max-width:1240px;
+      margin:0 auto;
+      padding:26px 20px;
     }
-
-    .cube-option.selected {
-      border-color: #ff73bb;
-      background: #f6eaf1;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.6),
-        0 0 0 2px rgba(255,115,187,0.18),
-        0 3px 8px rgba(255,115,187,0.12);
+    .layout{
+      display:grid;
+      grid-template-columns:3fr 2fr;
+      gap:20px;
     }
-
-    .cube-svg-wrap {
-      width: 58px;
-      height: 50px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .panel{
+      background:rgba(255,255,255,0.82);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
     }
-
-    .cube-name {
-      font-size: 15px;
-      line-height: 1.2;
-      font-weight: 700;
-      color: #111827;
-      margin: 0 0 4px 0;
+    .viewer-wrap{
+      position:relative;
+      height:580px;
+      background:linear-gradient(180deg,#f7fbff 0%,#edf4ff 100%);
     }
-
-    .cube-volume {
-      font-size: 12px;
-      line-height: 1.2;
-      color: #5b6472;
-      margin: 0;
+    #scene{
+      width:100%;
+      height:100%;
+      display:block;
+      cursor:grab;
     }
-
-    .help-box {
-      margin-top: 10px;
-      background: #f7efe6;
-      border: 1.5px solid #efc79c;
-      border-radius: 16px;
-      padding: 14px 14px 12px;
-      font-size: 12px;
-      color: #7a4f1f;
-      line-height: 1.7;
+    #scene:active{
+      cursor:grabbing;
     }
-
-    .help-box-title {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #8b5a2b;
+    .viewer-note{
+      position:absolute;
+      top:14px;
+      left:14px;
+      z-index:2;
+      background:rgba(255,255,255,0.88);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 14px;
+      font-size:13px;
+      color:var(--muted);
+      box-shadow:0 8px 20px rgba(15,23,42,0.06);
     }
-
-    .help-box ol {
-      margin: 0;
-      padding-left: 18px;
+    .legend{
+      padding:16px 18px 18px;
+      border-top:1px solid var(--border);
+      background:rgba(255,255,255,0.72);
     }
-
-    .help-box li {
-      margin: 0;
+    .legend h3{
+      margin:0 0 12px;
+      font-size:16px;
     }
-
-    .credit-tag {
-      position: absolute;
-      left: 10px;
-      bottom: 6px;
-      font-size: 9px;
-      color: #c0c6d1;
-      opacity: 0.78;
-      line-height: 1.2;
-      pointer-events: none;
+    .legend-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:12px;
     }
-
-    .right-panel {
-      width: 300px;
-      border-left: 1px solid #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: #f7f7f8;
+    .legend-item{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+      color:var(--muted);
     }
-
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-      min-width: 0;
-      background: #f1f5f9;
+    .swatch{
+      width:20px;
+      height:20px;
+      border-radius:7px;
+      border:1px solid rgba(0,0,0,0.08);
     }
-
-    .section-title {
-      font-size: 14px;
-      font-weight: 700;
-      margin: 0 0 8px 0;
-      color: #14213d;
+    .card{
+      padding:24px;
     }
-
-    .top-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 18px 20px;
-      background: #eef2f7;
-      border-bottom: 1px solid #e5e7eb;
+    .pill{
+      display:inline-block;
+      padding:7px 12px;
+      border-radius:999px;
+      background:#e8efff;
+      color:#2451cf;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:14px;
     }
-
-    #boxTabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
+    .question-title{
+      margin:0 0 10px;
+      font-size:24px;
+      line-height:1.25;
     }
-
-    .tab-btn {
-      border: none;
-      background: transparent;
-      color: #334155;
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
+    .question-text{
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.6;
+      margin-bottom:18px;
+      min-height:72px;
     }
-
-    .tab-btn.active {
-      background: #8b5cf6;
-      color: white;
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+    .stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-bottom:20px;
     }
-
-    .canvas-wrap {
-      flex: 1;
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
-      padding: 18px 20px;
-      min-height: 620px;
+    .stat{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
     }
-
-    .canvas-card {
-      width: 100%;
-      height: 620px;
-      background: linear-gradient(180deg, #ffffff, #f8fafc);
-      border: 1px solid #e5e7eb;
-      border-radius: 20px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-      position: relative;
-      overflow: hidden;
+    .stat-label{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:8px;
     }
-
-    #scene {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: grab;
+    .stat-value{
+      font-size:30px;
+      font-weight:800;
+      color:#0f274d;
     }
-
-    #scene:active {
-      cursor: grabbing;
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:8px;
+      margin-bottom:14px;
     }
-
-    .button-row {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 0 0 16px;
-      flex-wrap: wrap;
+    .action{
+      border:none;
+      border-radius:16px;
+      padding:13px 18px;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
     }
-
-    button.action {
-      border: none;
-      border-radius: 14px;
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s;
+    .secondary{
+      background:#fff;
+      border:1px solid var(--border);
+      color:var(--text);
     }
-
-    .primary {
-      background: #8b5cf6;
-      color: white;
-      box-shadow: 0 8px 18px rgba(139, 92, 246, 0.25);
+    .primary{
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:#fff;
+      box-shadow:0 10px 20px rgba(47,102,227,0.25);
     }
-
-    .primary:hover {
-      background: #7c3aed;
+    .action:disabled{
+      opacity:.45;
+      cursor:not-allowed;
     }
-
-    .secondary {
-      background: white;
-      color: #374151;
-      border: 1px solid #d1d5db;
+    .small-note{
+      font-size:13px;
+      line-height:1.6;
+      color:var(--muted);
     }
-
-    .secondary:hover {
-      background: #f9fafb;
+    .footer-credit{
+      margin-top:14px;
+      font-size:12px;
+      color:#94a3b8;
     }
-
-    .stat-card {
-      background: #f1f1f2;
-      border-radius: 16px;
-      padding: 14px 14px 16px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+    @media (max-width: 980px){
+      .layout{ grid-template-columns:1fr; }
+      .viewer-wrap{ height:460px; }
     }
-
-    .stat-label {
-      font-size: 12px;
-      color: #9aa3b2;
-      margin-bottom: 8px;
-      line-height: 1.3;
-    }
-
-    .stat-value {
-      font-size: 17px;
-      font-weight: 700;
-      color: #14213d;
-      line-height: 1.35;
-    }
-
-    .success-box {
-      background: #ecfdf5;
-      border: 1px solid #bbf7d0;
-      border-radius: 14px;
-      padding: 12px;
-      color: #15803d;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .summary {
-      margin-top: auto;
-      padding-top: 14px;
-      border-top: 1px solid #eceff3;
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .summary-row strong {
-      color: #1f2937;
-    }
-
-    .hint-overlay {
-      position: absolute;
-      left: 16px;
-      bottom: 16px;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 12px;
-      color: #4b5563;
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
-      pointer-events: none;
-    }
-
-    @media (max-width: 1024px) {
-      .layout {
-        flex-direction: column;
-      }
-
-      .left-panel,
-      .right-panel {
-        width: 100%;
-        border: none;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      .cube-options {
-        flex-direction: row;
-      }
-
-      .canvas-card {
-        height: 420px;
-      }
-
-      .left-panel-title {
-        font-size: 24px;
-      }
-
-      .top-bar {
-        padding: 14px 16px;
-      }
-
-      .canvas-wrap {
-        min-height: 440px;
-        padding: 14px 16px;
-      }
+    @media (max-width: 640px){
+      .stats, .legend-grid{ grid-template-columns:1fr; }
     }
   </style>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
 </head>
 <body>
-  <div class="header">
-    <h1>Cube It Right!</h1>
-  </div>
-
-  <div class="layout">
-    <aside class="panel left-panel">
-      <div class="left-panel-head">
-        <p class="left-panel-title">Cube Shelf</p>
-        <p class="left-panel-subtext">
-          Choose a cube. The bigger the cube, the more space it takes up.
-        </p>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">◼</div>
+        <div>
+          <h1>Volume Explorer</h1>
+          <p>Interactive 3D Volume &amp; Surface Area</p>
+        </div>
       </div>
+      <div class="question-nav" id="questionNav"></div>
+    </div>
+  </header>
 
-      <div class="cube-options" id="cubeOptions"></div>
-
-      <div class="help-box">
-        <span class="help-box-title">How to play:</span>
-        <ol>
-          <li>Pick a cube from Cube Shelf.</li>
-          <li>Pick a box.</li>
-          <li>Click <strong>Add Cube</strong> to place cube in the box.</li>
-        </ol>
-      </div>
-
-      <div class="credit-tag">
-        Developed by Ms Violet Soh | Supported by OpenAI Technology
-      </div>
-    </aside>
-
-    <main class="main">
-      <div class="top-bar">
-        <div id="boxTabs"></div>
-      </div>
-
-      <div class="canvas-wrap">
-        <div class="canvas-card">
+  <main>
+    <div class="layout">
+      <div class="panel">
+        <div class="viewer-wrap">
           <canvas id="scene"></canvas>
-          <div class="hint-overlay">Drag to rotate the box</div>
+          <div class="viewer-note">
+            <strong>Drag to rotate.</strong> Scroll to zoom. Click a cube to detach / reattach.
+          </div>
+        </div>
+
+        <div class="legend">
+          <h3>Face Legend</h3>
+          <div class="legend-grid">
+            <div class="legend-item"><span class="swatch" id="paintedSwatch" style="background:#4d96ff"></span>Painted outer surfaces</div>
+            <div class="legend-item"><span class="swatch" style="background:#ffffff"></span>Inner unpainted surfaces</div>
+          </div>
         </div>
       </div>
 
-      <div class="button-row">
-        <button class="action primary" id="addCubeBtn">+ Add Cube</button>
-        <button class="action secondary" id="undoBtn">Undo</button>
-        <button class="action secondary" id="resetBtn">Reset Box</button>
-      </div>
-    </main>
+      <div class="panel">
+        <div class="card">
+          <div class="pill" id="pillLabel">Question 1</div>
+          <h2 class="question-title" id="questionTitle"></h2>
+          <div class="question-text" id="questionText"></div>
 
-    <aside class="panel right-panel">
-      <p class="section-title">Your Results</p>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-label">Total cubes</div>
+              <div class="stat-value" id="totalCubes">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Painted faces</div>
+              <div class="stat-value" id="paintedFaces">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Detached cubes</div>
+              <div class="stat-value" id="detachedCount">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Remaining attached</div>
+              <div class="stat-value" id="remainingCount">0</div>
+            </div>
+          </div>
 
-      <div class="stat-card">
-        <div class="stat-label">Box dimensions</div>
-        <div class="stat-value" id="boxDimensions">-</div>
-      </div>
+          <div class="controls">
+            <button class="action secondary" id="prevBtn">← Previous</button>
+            <button class="action secondary" id="nextBtn">Next →</button>
+            <button class="action primary" id="resetBtn">Reset Detached Cubes</button>
+          </div>
 
-      <div class="stat-card">
-        <div class="stat-label">Selected box volume</div>
-        <div class="stat-value" id="selectedBoxVolume">-</div>
-      </div>
+          <div class="small-note">
+            Click cubes to pull them away from the solid so learners can inspect the inside.
+          </div>
 
-      <div class="stat-card">
-        <div class="stat-label">Selected cube volume</div>
-        <div class="stat-value" id="cubeVolume">-</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Number of cubes by length</div>
-        <div class="stat-value" id="lengthCount">-</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Number of cubes by breadth</div>
-        <div class="stat-value" id="breadthCount">-</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Number of cubes by height</div>
-        <div class="stat-value" id="heightCount">-</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Number of cubes added</div>
-        <div class="stat-value" id="cubesAddedCount">0</div>
-      </div>
-
-      <div id="lastAddedBox"></div>
-
-      <div class="summary">
-        <div class="summary-row">
-          <span>Total box volume</span>
-          <strong id="totalVol">-</strong>
-        </div>
-        <div class="summary-row">
-          <span>Used</span>
-          <strong id="usedVol">-</strong>
-        </div>
-        <div class="summary-row">
-          <span>Remaining</span>
-          <strong id="remainingVol">-</strong>
+          <div class="footer-credit">Developed for GitHub Pages</div>
         </div>
       </div>
-    </aside>
-  </div>
+    </div>
+  </main>
 
-  <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-    const BOXES = [
-      { width: 7, depth: 7, height: 7, label: 'Box A' },
-      { width: 15, depth: 8, height: 7, label: 'Box B' },
-      { width: 21, depth: 11, height: 9, label: 'Box C' },
-      { width: 14, depth: 10, height: 8, label: 'Box D' },
-      { width: 15, depth: 9, height: 7, label: 'Box E' },
-      { width: 31, depth: 10, height: 8, label: 'Box F' }
+  <script>
+    const INTERNAL_COLOR = 0xffffff;
+
+    const QUESTION_PAINT_COLORS = [
+      0x4d96ff, // Q1 blue
+      0xff8fab, // Q2 pink
+      0x51cf66, // Q3 green
+      0xffb347, // Q4 orange
+      0xa78bfa, // Q5 purple
+      0x2dd4bf, // Q6 teal
+      0xf87171, // Q7 coral
+      0xfacc15, // Q8 yellow
+      0x60a5fa, // Q9 sky
+      0xf472b6  // Q10 rose
     ];
 
-    const CUBE_SIZES = [1, 2, 3];
-
-    let activeBox = 0;
-    let selectedCube = 2;
-    let cubesMap = {};
-    let lastAdded = null;
-
-    BOXES.forEach((_, index) => {
-      cubesMap[index] = [];
-    });
-
-    const cubeOptionsEl = document.getElementById('cubeOptions');
-    const boxTabsEl = document.getElementById('boxTabs');
-    const boxDimensions = document.getElementById('boxDimensions');
-    const selectedBoxVolume = document.getElementById('selectedBoxVolume');
-    const cubeVolume = document.getElementById('cubeVolume');
-    const lengthCount = document.getElementById('lengthCount');
-    const breadthCount = document.getElementById('breadthCount');
-    const heightCount = document.getElementById('heightCount');
-    const cubesAddedCount = document.getElementById('cubesAddedCount');
-    const totalVolEl = document.getElementById('totalVol');
-    const usedVolEl = document.getElementById('usedVol');
-    const remainingVolEl = document.getElementById('remainingVol');
-    const lastAddedBox = document.getElementById('lastAddedBox');
-
-    const addCubeBtn = document.getElementById('addCubeBtn');
-    const undoBtn = document.getElementById('undoBtn');
-    const resetBtn = document.getElementById('resetBtn');
-
-    function getCurrentBox() {
-      return BOXES[activeBox];
+    function hexToCss(num) {
+      return "#" + num.toString(16).padStart(6, "0");
     }
 
-    function getCurrentCubes() {
-      return cubesMap[activeBox] || [];
-    }
-
-    function getTotalVolume() {
-      const box = getCurrentBox();
-      return box.width * box.depth * box.height;
-    }
-
-    function getUsedVolume() {
-      return getCurrentCubes().reduce((sum, c) => sum + c.size ** 3, 0);
-    }
-
-    function cubesAlongAxis(dim) {
-      return Math.floor(dim / selectedCube);
-    }
-
-    function isOccupied(placedCubes, x, y, z, size) {
-      return placedCubes.some(c =>
-        x < c.x + c.size && x + size > c.x &&
-        y < c.y + c.size && y + size > c.y &&
-        z < c.z + c.size && z + size > c.z
-      );
-    }
-
-    function findPlacement(box, placedCubes, cubeSize) {
-      for (let z = 0; z + cubeSize <= box.height; z++) {
-        for (let y = 0; y + cubeSize <= box.depth; y++) {
-          for (let x = 0; x + cubeSize <= box.width; x++) {
-            if (!isOccupied(placedCubes, x, y, z, cubeSize)) {
-              return { x, y, z, size: cubeSize };
-            }
+    function generateRectangularPrism(w, h, d) {
+      const cubes = [];
+      for (let x = 0; x < w; x++) {
+        for (let y = 0; y < h; y++) {
+          for (let z = 0; z < d; z++) {
+            cubes.push({ x, y, z });
           }
         }
       }
-      return null;
+      return cubes;
     }
 
-    function cubeSVG(topColor, leftColor, rightColor) {
-      return `
-        <svg width="54" height="48" viewBox="0 0 54 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <polygon points="27,6 44,16 27,26 10,16" fill="${topColor}"></polygon>
-          <polygon points="10,16 27,26 27,44 10,34" fill="${leftColor}"></polygon>
-          <polygon points="44,16 27,26 27,44 44,34" fill="${rightColor}"></polygon>
-          <polyline points="27,6 44,16 44,34 27,44 10,34 10,16 27,6"
-            fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="1.2"></polyline>
-          <line x1="27" y1="26" x2="27" y2="44" stroke="rgba(0,0,0,0.12)" stroke-width="1.2"></line>
-          <line x1="27" y1="26" x2="10" y2="16" stroke="rgba(0,0,0,0.12)" stroke-width="1.2"></line>
-          <line x1="27" y1="26" x2="44" y2="16" stroke="rgba(0,0,0,0.12)" stroke-width="1.2"></line>
-        </svg>
-      `;
-    }
-
-    function getCubeColors(size) {
-      if (size === 1) {
-        return {
-          top: '#63A3FF',
-          left: '#3578F6',
-          right: '#2E65DD'
-        };
+    const questions = [
+      {
+        id: 1,
+        title: "Three cubes are glued together to form the solid below.",
+        text: "All the faces of the solid are painted. The total surface area of the painted faces is 504 cm². Find the volume of one cube.",
+        // L-shape like your picture:
+        // front-left, back-left, back-right
+        cubes: [
+          { x: 0, y: 0, z: 0 },
+          { x: 0, y: 0, z: 1 },
+          { x: 1, y: 0, z: 1 }
+        ]
+      },
+      {
+        id: 2,
+        title: "Explore a 3 × 1 × 1 prism",
+        text: "This solid is made of 3 cubes in a straight row. Observe the painted and unpainted faces.",
+        cubes: generateRectangularPrism(3, 1, 1)
+      },
+      {
+        id: 3,
+        title: "Investigate a 3 × 2 × 1 cuboid",
+        text: "How many painted faces are there altogether?",
+        cubes: generateRectangularPrism(3, 2, 1)
+      },
+      {
+        id: 4,
+        title: "Investigate a 3 × 2 × 2 cuboid",
+        text: "Detach cubes to see which faces become hidden inside the solid.",
+        cubes: generateRectangularPrism(3, 2, 2)
+      },
+      {
+        id: 5,
+        title: "Examine a 3 × 3 × 1 slab",
+        text: "This is a flat layer. Compare the number of cubes to the number of exposed faces.",
+        cubes: generateRectangularPrism(3, 3, 1)
+      },
+      {
+        id: 6,
+        title: "Build understanding with a 4 × 2 × 1 prism",
+        text: "Which cubes have the greatest number of painted faces?",
+        cubes: generateRectangularPrism(4, 2, 1)
+      },
+      {
+        id: 7,
+        title: "Study a 2 × 2 × 3 cuboid",
+        text: "How does the number of painted faces change when the solid becomes taller?",
+        cubes: generateRectangularPrism(2, 2, 3)
+      },
+      {
+        id: 8,
+        title: "Investigate a 4 × 2 × 2 cuboid",
+        text: "Detach corner cubes first, then edge cubes, and compare them.",
+        cubes: generateRectangularPrism(4, 2, 2)
+      },
+      {
+        id: 9,
+        title: "Explore a 3 × 3 × 2 cuboid",
+        text: "Try to find cubes with 3, 2, 1, or 0 painted faces.",
+        cubes: generateRectangularPrism(3, 3, 2)
+      },
+      {
+        id: 10,
+        title: "Challenge: a 3 × 3 × 3 cube",
+        text: "Can you identify the cubes with no painted faces at all?",
+        cubes: generateRectangularPrism(3, 3, 3)
       }
-      if (size === 2) {
-        return {
-          top: '#51DE88',
-          left: '#2CC85D',
-          right: '#1FB74D'
-        };
+    ];
+
+    function countTotalPaintedFaces(cubes) {
+      const cubeSet = new Set(cubes.map(c => `${c.x},${c.y},${c.z}`));
+      let total = 0;
+      for (const c of cubes) {
+        const neighbors = [
+          [c.x + 1, c.y, c.z],
+          [c.x - 1, c.y, c.z],
+          [c.x, c.y + 1, c.z],
+          [c.x, c.y - 1, c.z],
+          [c.x, c.y, c.z + 1],
+          [c.x, c.y, c.z - 1]
+        ];
+        for (const n of neighbors) {
+          if (!cubeSet.has(n.join(","))) total++;
+        }
       }
-      return {
-        top: '#FFA13D',
-        left: '#FF7A00',
-        right: '#F46A00'
-      };
+      return total;
     }
 
-    function renderCubeOptions() {
-      cubeOptionsEl.innerHTML = '';
+    let currentQId = 1;
+    let detachedIndices = [];
 
-      CUBE_SIZES.forEach(size => {
-        const colors = getCubeColors(size);
-        const div = document.createElement('div');
-        div.className = 'cube-option' + (selectedCube === size ? ' selected' : '');
+    const questionNav = document.getElementById("questionNav");
+    const pillLabel = document.getElementById("pillLabel");
+    const questionTitle = document.getElementById("questionTitle");
+    const questionText = document.getElementById("questionText");
+    const totalCubesEl = document.getElementById("totalCubes");
+    const paintedFacesEl = document.getElementById("paintedFaces");
+    const detachedCountEl = document.getElementById("detachedCount");
+    const remainingCountEl = document.getElementById("remainingCount");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const canvas = document.getElementById("scene");
+    const paintedSwatch = document.getElementById("paintedSwatch");
 
-        div.innerHTML = `
-          <div class="cube-svg-wrap">
-            ${cubeSVG(colors.top, colors.left, colors.right)}
-          </div>
-          <p class="cube-name">${size} cm cube</p>
-          <p class="cube-volume">Volume: ${size ** 3} cm³</p>
-        `;
-
-        div.onclick = () => {
-          selectedCube = size;
-          renderUI();
-        };
-
-        cubeOptionsEl.appendChild(div);
-      });
-    }
-
-    function renderBoxTabs() {
-      boxTabsEl.innerHTML = '';
-
-      BOXES.forEach((box, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'tab-btn' + (activeBox === i ? ' active' : '');
-        btn.textContent = box.label;
-
-        btn.onclick = () => {
-          activeBox = i;
-          lastAdded = null;
-          renderUI();
-          rebuildScene();
-        };
-
-        boxTabsEl.appendChild(btn);
-      });
-    }
-
-    function renderStats() {
-      const box = getCurrentBox();
-      const totalVol = getTotalVolume();
-      const usedVol = getUsedVolume();
-
-      boxDimensions.textContent = `${box.width} cm by ${box.depth} cm by ${box.height} cm`;
-      selectedBoxVolume.textContent = `${totalVol} cm³`;
-      cubeVolume.textContent = `${selectedCube ** 3} cm³`;
-      lengthCount.textContent = cubesAlongAxis(box.width);
-      breadthCount.textContent = cubesAlongAxis(box.depth);
-      heightCount.textContent = cubesAlongAxis(box.height);
-      cubesAddedCount.textContent = getCurrentCubes().length;
-      totalVolEl.textContent = `${totalVol} cm³`;
-      usedVolEl.textContent = `${usedVol} cm³`;
-      remainingVolEl.textContent = `${totalVol - usedVol} cm³`;
-
-      if (lastAdded) {
-        lastAddedBox.innerHTML = `
-          <div class="success-box">
-            Great! A ${lastAdded.size} cm cube was added.
-          </div>
-        `;
-      } else {
-        lastAddedBox.innerHTML = '';
-      }
-    }
-
-    function renderUI() {
-      renderCubeOptions();
-      renderBoxTabs();
-      renderStats();
-    }
-
-    addCubeBtn.onclick = () => {
-      const box = getCurrentBox();
-      const currentCubes = getCurrentCubes();
-      const totalVol = getTotalVolume();
-      const usedVol = getUsedVolume();
-      const nextVol = selectedCube ** 3;
-
-      if (usedVol + nextVol > totalVol) {
-        alert('Not enough space!');
-        return;
-      }
-
-      const placement = findPlacement(box, currentCubes, selectedCube);
-
-      if (!placement) {
-        alert('This cube is too big for the available space.');
-        return;
-      }
-
-      cubesMap[activeBox].push(placement);
-      lastAdded = placement;
-      rebuildScene();
-      renderUI();
-    };
-
-    undoBtn.onclick = () => {
-      if (cubesMap[activeBox].length > 0) {
-        cubesMap[activeBox].pop();
-        lastAdded = null;
-        rebuildScene();
-        renderUI();
-      }
-    };
-
-    resetBtn.onclick = () => {
-      cubesMap[activeBox] = [];
-      lastAdded = null;
-      rebuildScene();
-      renderUI();
-    };
-
-    const canvas = document.getElementById('scene');
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: true
-    });
-
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const scene = new THREE.Scene();
-    scene.background = null;
+    scene.background = new THREE.Color(0xf4f8ff);
+    scene.fog = new THREE.Fog(0xf4f8ff, 16, 42);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-    camera.position.set(18, 16, 22);
+    camera.position.set(8, 6, 8);
 
-    const controls = new OrbitControls(camera, canvas);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
     controls.enablePan = false;
-    controls.minDistance = 10;
-    controls.maxDistance = 80;
-    controls.target.set(0, 4, 0);
+    controls.minDistance = 4;
+    controls.maxDistance = 28;
 
-    const ambient = new THREE.AmbientLight(0xffffff, 1.1);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambient);
 
-    const dir1 = new THREE.DirectionalLight(0xffffff, 1.0);
-    dir1.position.set(20, 30, 20);
-    scene.add(dir1);
+    const light1 = new THREE.DirectionalLight(0xffffff, 0.95);
+    light1.position.set(8, 10, 8);
+    scene.add(light1);
 
-    const dir2 = new THREE.DirectionalLight(0xffffff, 0.45);
-    dir2.position.set(-20, 15, -15);
-    scene.add(dir2);
+    const light2 = new THREE.DirectionalLight(0xffffff, 0.45);
+    light2.position.set(-6, 5, -8);
+    scene.add(light2);
 
     const group = new THREE.Group();
     scene.add(group);
 
-    function clearGroup() {
-      while (group.children.length) {
-        const child = group.children[0];
-        group.remove(child);
+    const grid = new THREE.GridHelper(30, 15, 0xc7d6ff, 0xdbe6ff);
+    grid.position.y = -1.1;
+    scene.add(grid);
 
-        if (child.geometry) child.geometry.dispose();
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(30, 30),
+      new THREE.MeshBasicMaterial({
+        color: 0xf8fbff,
+        transparent: true,
+        opacity: 0.8,
+        side: THREE.DoubleSide
+      })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -1.11;
+    scene.add(floor);
 
-        if (child.material) {
-          if (Array.isArray(child.material)) {
-            child.material.forEach(m => m.dispose());
-          } else {
-            child.material.dispose();
-          }
-        }
-      }
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    function getCurrentQuestion() {
+      return questions.find(q => q.id === currentQId);
     }
 
-    function makeBoxFrame(box) {
-      const geometry = new THREE.BoxGeometry(box.width, box.height, box.depth);
-
-      const transparentBox = new THREE.Mesh(
-        geometry,
-        new THREE.MeshPhongMaterial({
-          color: 0xcbd5e1,
-          transparent: true,
-          opacity: 0.16,
-          side: THREE.DoubleSide
-        })
-      );
-      transparentBox.position.set(0, box.height / 2, 0);
-      group.add(transparentBox);
-
-      const edges = new THREE.EdgesGeometry(geometry);
-      const line = new THREE.LineSegments(
-        edges,
-        new THREE.LineBasicMaterial({ color: 0x64748b })
-      );
-      line.position.set(0, box.height / 2, 0);
-      group.add(line);
+    function getCurrentPaintColor() {
+      return QUESTION_PAINT_COLORS[currentQId - 1] || 0x4d96ff;
     }
 
-    function makePlacedCubes(box, placedCubes) {
-      placedCubes.forEach(c => {
-        const geo = new THREE.BoxGeometry(c.size, c.size, c.size);
-        const colors = getCubeColors(c.size);
-
-        const materials = [
-          new THREE.MeshPhongMaterial({ color: colors.right }),
-          new THREE.MeshPhongMaterial({ color: colors.left }),
-          new THREE.MeshPhongMaterial({ color: colors.top }),
-          new THREE.MeshPhongMaterial({ color: colors.left }),
-          new THREE.MeshPhongMaterial({ color: colors.right }),
-          new THREE.MeshPhongMaterial({ color: colors.left })
-        ];
-
-        const mesh = new THREE.Mesh(geo, materials);
-
-        const x = -box.width / 2 + c.x + c.size / 2;
-        const y = c.z + c.size / 2;
-        const z = -box.depth / 2 + c.y + c.size / 2;
-
-        mesh.position.set(x, y, z);
-        group.add(mesh);
-
-        const edge = new THREE.LineSegments(
-          new THREE.EdgesGeometry(geo),
-          new THREE.LineBasicMaterial({
-            color: 0x000000,
-            transparent: true,
-            opacity: 0.12
-          })
-        );
-        edge.position.copy(mesh.position);
-        group.add(edge);
+    function buildNav() {
+      questionNav.innerHTML = "";
+      questions.forEach(q => {
+        const btn = document.createElement("button");
+        btn.className = "nav-btn" + (q.id === currentQId ? " active" : "");
+        btn.textContent = q.id;
+        btn.onclick = () => selectQuestion(q.id);
+        questionNav.appendChild(btn);
       });
     }
 
-    function addBaseGrid(box) {
-      const size = Math.max(box.width, box.depth) + 6;
-      const divisions = Math.max(box.width, box.depth) + 6;
-      const grid = new THREE.GridHelper(size, divisions, 0xe2e8f0, 0xe2e8f0);
-      grid.position.y = 0;
-      group.add(grid);
+    function selectQuestion(id) {
+      currentQId = id;
+      detachedIndices = [];
+      rebuildScene();
+      updateUI();
+    }
+
+    function getCubeMaterials(c, cubeSet, paintColor) {
+      const has = (x, y, z) => cubeSet.has(`${x},${y},${z}`);
+
+      const right  = has(c.x + 1, c.y, c.z) ? INTERNAL_COLOR : paintColor;
+      const left   = has(c.x - 1, c.y, c.z) ? INTERNAL_COLOR : paintColor;
+      const top    = has(c.x, c.y + 1, c.z) ? INTERNAL_COLOR : paintColor;
+      const bottom = has(c.x, c.y - 1, c.z) ? INTERNAL_COLOR : paintColor;
+      const front  = has(c.x, c.y, c.z + 1) ? INTERNAL_COLOR : paintColor;
+      const back   = has(c.x, c.y, c.z - 1) ? INTERNAL_COLOR : paintColor;
+
+      return [
+        new THREE.MeshLambertMaterial({ color: right }),
+        new THREE.MeshLambertMaterial({ color: left }),
+        new THREE.MeshLambertMaterial({ color: top }),
+        new THREE.MeshLambertMaterial({ color: bottom }),
+        new THREE.MeshLambertMaterial({ color: front }),
+        new THREE.MeshLambertMaterial({ color: back })
+      ];
+    }
+
+    function clearGroup() {
+      while (group.children.length > 0) {
+        const obj = group.children[0];
+        group.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
+          if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose());
+          else obj.material.dispose();
+        }
+      }
     }
 
     function rebuildScene() {
       clearGroup();
 
-      const box = getCurrentBox();
-      const cubes = getCurrentCubes();
+      const q = getCurrentQuestion();
+      const paintColor = getCurrentPaintColor();
+      const cubes = q.cubes;
+      const cubeSet = new Set(cubes.map(c => `${c.x},${c.y},${c.z}`));
 
-      makeBoxFrame(box);
-      makePlacedCubes(box, cubes);
-      addBaseGrid(box);
+      const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+      const edgeGeometry = new THREE.EdgesGeometry(cubeGeometry);
 
-      controls.target.set(0, box.height / 2, 0);
+      const xs = cubes.map(c => c.x);
+      const ys = cubes.map(c => c.y);
+      const zs = cubes.map(c => c.z);
 
-      const maxDim = Math.max(box.width, box.depth, box.height);
-      const scale = Math.min(maxDim, 20);
+      const centerX = (Math.min(...xs) + Math.max(...xs)) / 2;
+      const centerY = (Math.min(...ys) + Math.max(...ys)) / 2;
+      const centerZ = (Math.min(...zs) + Math.max(...zs)) / 2;
 
-      camera.position.set(scale * 1.8, box.height * 1.1 + 4, scale * 1.9);
-      camera.lookAt(0, box.height / 2, 0);
+      cubes.forEach((c, index) => {
+        const mesh = new THREE.Mesh(cubeGeometry, getCubeMaterials(c, cubeSet, paintColor));
 
+        let x = (c.x - centerX) * 1.05;
+        let y = (c.y - centerY) * 1.05;
+        let z = (c.z - centerZ) * 1.05;
+
+        if (detachedIndices.includes(index)) {
+          const dir = new THREE.Vector3(x || 0.3, y + 0.4, z || 0.3).normalize();
+          x += dir.x * 2.0;
+          y += dir.y * 2.0 + 0.5;
+          z += dir.z * 2.0;
+        }
+
+        mesh.position.set(x, y, z);
+        mesh.userData.index = index;
+        group.add(mesh);
+
+        const edge = new THREE.LineSegments(
+          edgeGeometry,
+          new THREE.LineBasicMaterial({ color: 0x29466f, transparent: true, opacity: 0.4 })
+        );
+        edge.position.copy(mesh.position);
+        group.add(edge);
+      });
+
+      fitCamera();
+    }
+
+    function fitCamera() {
+      const box = new THREE.Box3().setFromObject(group);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+
+      const maxDim = Math.max(size.x, size.y, size.z, 3);
+      const dist = maxDim * 2.1;
+
+      camera.position.set(center.x + dist, center.y + dist * 0.65, center.z + dist);
+      controls.target.copy(center);
       controls.update();
+    }
+
+    function updateUI() {
+      const q = getCurrentQuestion();
+      const paintColor = getCurrentPaintColor();
+
+      pillLabel.textContent = `Question ${q.id}`;
+      questionTitle.textContent = q.title;
+      questionText.textContent = q.text;
+      totalCubesEl.textContent = q.cubes.length;
+      paintedFacesEl.textContent = countTotalPaintedFaces(q.cubes);
+      detachedCountEl.textContent = detachedIndices.length;
+      remainingCountEl.textContent = q.cubes.length - detachedIndices.length;
+      prevBtn.disabled = currentQId === 1;
+      nextBtn.disabled = currentQId === questions.length;
+      paintedSwatch.style.background = hexToCss(paintColor);
+
+      buildNav();
     }
 
     function resizeRenderer() {
       const rect = canvas.getBoundingClientRect();
-      const width = Math.max(300, rect.width);
-      const height = Math.max(300, rect.height);
-
-      renderer.setSize(width, height, false);
-      camera.aspect = width / height;
+      renderer.setSize(rect.width, rect.height, false);
+      camera.aspect = rect.width / rect.height;
       camera.updateProjectionMatrix();
     }
 
-    window.addEventListener('resize', resizeRenderer);
+    function onCanvasClick(event) {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const cubeMeshes = group.children.filter(obj => obj.type === "Mesh");
+      const hits = raycaster.intersectObjects(cubeMeshes);
+
+      if (hits.length > 0) {
+        const idx = hits[0].object.userData.index;
+        if (detachedIndices.includes(idx)) {
+          detachedIndices = detachedIndices.filter(i => i !== idx);
+        } else {
+          detachedIndices.push(idx);
+        }
+        rebuildScene();
+        updateUI();
+      }
+    }
+
+    prevBtn.onclick = () => {
+      if (currentQId > 1) selectQuestion(currentQId - 1);
+    };
+
+    nextBtn.onclick = () => {
+      if (currentQId < questions.length) selectQuestion(currentQId + 1);
+    };
+
+    resetBtn.onclick = () => {
+      detachedIndices = [];
+      rebuildScene();
+      updateUI();
+    };
+
+    canvas.addEventListener("click", onCanvasClick);
+    window.addEventListener("resize", resizeRenderer);
 
     function animate() {
       requestAnimationFrame(animate);
@@ -910,14 +706,10 @@
       renderer.render(scene, camera);
     }
 
-    renderUI();
     resizeRenderer();
     rebuildScene();
+    updateUI();
     animate();
-  </script>
-
-  <script>
-    document.addEventListener('contextmenu', e => e.preventDefault());
   </script>
 </body>
 </html>
